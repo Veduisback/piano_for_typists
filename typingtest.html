@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+    .style.display = 'block';
+
+    document.getElementById('finalResult')
+    .innerText =
+        `Your typing speed was ${finalWPS} WPS`;
+
+    const user =
+        JSON.parse(localStorage.getItem('user'));
+
+    if(user){
+
+        try{
+
+            const userRef =
+                doc(db, 'users', user.uid);
+
+            await updateDoc(userRef, {
+
+                latestWPS: finalWPS,
+
+                testsAttempted: increment(1)
+            });
+
+            console.log('Speed saved');
+
+        }
+        catch(error){
+
+            console.log(error);
+        }
+    }
+}
+
+window.restartTest = function(){
+
+    clearInterval(timer);
+
+    timerStarted = false;
+
+    timeLeft = 120;
+
+    correctChars = 0;
+
+    document.getElementById('time')
+    .innerText = timeLeft;
+
+    document.getElementById('wps')
+    .innerText = 0;
+
+    inputBox.disabled = false;
+
+    inputBox.value = '';
+
+    document.getElementById('resultBox')
+    .style.display = 'none';
+
+    loadPassage();
+}
+
+</script>
+
+</body>
+</html>
