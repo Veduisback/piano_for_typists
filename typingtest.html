@@ -169,7 +169,7 @@ button{
         </div>
 
         <div class="score">
-            WPS: <span id="wps">0</span>
+            WPM: <span id="wpm">0</span>
         </div>
 
     </div>
@@ -306,7 +306,7 @@ inputBox.addEventListener('input', () => {
 
     });
 
-    calculateWPS();
+    calculateWPM();
 
 });
 
@@ -319,7 +319,7 @@ function startTimer(){
         document.getElementById('time')
         .innerText = timeLeft;
 
-        calculateWPS();
+        calculateWPM();
 
         if(timeLeft <= 0){
 
@@ -329,18 +329,23 @@ function startTimer(){
     },1000);
 }
 
-function calculateWPS(){
+function calculateWPM(){
 
     const timeSpent = 30 - timeLeft;
 
     if(timeSpent <= 0) return;
 
-    const words = correctChars / 5;
+    // standard typing calculation
+    const wordsTyped = correctChars / 5;
 
-    const wps = (words / timeSpent).toFixed(2);
+    // seconds to minutes
+    const minutes = timeSpent / 60;
 
-    document.getElementById('wps')
-    .innerText = wps;
+    const wpm =
+        Math.round(wordsTyped / minutes);
+
+    document.getElementById('wpm')
+    .innerText = wpm;
 }
 
 async function endTest(){
@@ -349,15 +354,15 @@ async function endTest(){
 
     inputBox.disabled = true;
 
-    const finalWPS =
-        document.getElementById('wps').innerText;
+    const finalWPM =
+        document.getElementById('wpm').innerText;
 
     document.getElementById('resultBox')
     .style.display = 'block';
 
     document.getElementById('finalResult')
     .innerText =
-        `Your typing speed was ${finalWPS} WPS`;
+        `Your typing speed was ${finalWPM} WPM`;
 
     const user =
         JSON.parse(localStorage.getItem('user'));
@@ -371,7 +376,7 @@ async function endTest(){
 
             await updateDoc(userRef, {
 
-                latestWPS: finalWPS,
+                latestWPM: finalWPM,
 
                 testsAttempted: increment(1)
             });
@@ -399,7 +404,7 @@ window.restartTest = function(){
     document.getElementById('time')
     .innerText = timeLeft;
 
-    document.getElementById('wps')
+    document.getElementById('wpm')
     .innerText = 0;
 
     inputBox.disabled = false;
@@ -416,4 +421,3 @@ window.restartTest = function(){
 
 </body>
 </html>
-
