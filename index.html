@@ -156,7 +156,46 @@ Now ascending notes can be played smoothly on the keyboard without jumping from 
 </div>
 
 <script>
+function triggerKey(key){
 
+    if(notes[key]){
+        playSound(notes[key], key);
+    }
+}
+
+/* KEYBOARD PLAY */
+document.addEventListener("keydown",(e)=>{
+
+    const key = e.key.toLowerCase();
+
+    triggerKey(key);
+
+});
+
+/* MOUSE + TOUCH PLAY */
+document.querySelectorAll(".white, .black").forEach(keyElement => {
+
+    keyElement.addEventListener("mousedown", () => {
+
+        const key =
+            keyElement.getAttribute("data-key");
+
+        triggerKey(key);
+
+    });
+
+    keyElement.addEventListener("touchstart", (e) => {
+
+        e.preventDefault();
+
+        const key =
+            keyElement.getAttribute("data-key");
+
+        triggerKey(key);
+
+    });
+
+});
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 const notes = {
