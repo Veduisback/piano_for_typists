@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TypeTone - Piano For Typists</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:#0f1117;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* NAVBAR */
+
+nav{
+    width:100%;
+    padding:20px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:fixed;
+    top:0;
+    z-index:1000;
+    backdrop-filter:blur(10px);
+    background:rgba(15,17,23,0.75);
+}
+
+.logo{
+    font-size:28px;
+    font-weight:700;
+    color:#ffffff;
+}
+
+.logo span{
+    color:#6ea8ff;
+}
+
+.nav-buttons{
+    display:flex;
+    gap:15px;
+}
+
+.nav-btn{
+    padding:12px 24px;
+    border:none;
+    border-radius:12px;
+    font-size:15px;
+    cursor:pointer;
+    transition:0.25s;
+    font-weight:500;
+}
+
+.signin{
+    background:transparent;
+    border:1px solid #6ea8ff;
+    color:#6ea8ff;
+}
+
+.signup{
+    background:#6ea8ff;
+    color:#111;
+}
+
+.nav-btn:hover{
+    transform:translateY(-2px);
+}
+
+/* HERO */
+
+.hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:120px 8% 60px;
+}
+
+.hero-container{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:70px;
+    align-items:center;
+}
+
+.hero-text h1{
+    font-size:70px;
+    line-height:1.05;
+    margin-bottom:25px;
+}
+
+.hero-text h1 span{
+    color:#6ea8ff;
+}
+
+.hero-text p{
+    color:#b5b5b5;
+    line-height:1.8;
+    font-size:18px;
+    margin-bottom:35px;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.hero-btn{
+    padding:16px 28px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.25s;
+    font-weight:600;
+}
+
+.primary{
+    background:#6ea8ff;
+    color:#111;
+}
+
+.secondary{
+    background:#1d2230;
+    color:white;
+    border:1px solid #333;
+}
+
+.hero-btn:hover{
+    transform:translateY(-3px);
+}
+
+/* PIANO VISUAL */
+
+.visual{
+    display:flex;
+    justify-content:center;
+}
+
+.piano-box{
+    background:#171b26;
+    padding:35px;
+    border-radius:28px;
+    box-shadow:0 0 40px rgba(0,0,0,0.45);
+}
+
+.keys{
+    display:flex;
+    position:relative;
+}
+
+.white{
+    width:65px;
+    height:250px;
+    background:white;
+    border:2px solid #111;
+    border-radius:0 0 10px 10px;
+}
+
+.black{
+    width:40px;
+    height:150px;
+    background:black;
+    position:absolute;
+    border-radius:0 0 8px 8px;
+}
+
+/* black positions */
+.b1{ left:45px; }
+.b2{ left:110px; }
+.b3{ left:240px; }
+.b4{ left:305px; }
+.b5{ left:370px; }
+
+/* FEATURES */
+
+.features{
+    padding:80px 8%;
+}
+
+.section-title{
+    text-align:center;
+    font-size:48px;
+    margin-bottom:60px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:30px;
+}
+
+.card{
+    background:#171b26;
+    padding:35px;
+    border-radius:24px;
+    transition:0.3s;
+    border:1px solid #23283a;
+}
+
+.card:hover{
+    transform:translateY(-6px);
+}
+
+.card h3{
+    margin:20px 0;
+    font-size:24px;
+}
+
+.card p{
+    color:#b8b8b8;
+    line-height:1.7;
+}
+
+/* AUTH MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.75);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:2000;
+}
+
+.modal-content{
+    width:400px;
+    background:#171b26;
+    padding:40px;
+    border-radius:24px;
+    text-align:center;
+}
+
+.modal-content h2{
+    margin-bottom:10px;
+}
+
+.modal-content p{
+    color:#aaa;
+    margin-bottom:30px;
+}
+
+.google-btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:14px;
+    background:white;
+    color:#111;
+    font-size:16px;
+    cursor:pointer;
+    font-weight:600;
+    transition:0.25s;
+}
+
+.google-btn:hover{
+    transform:translateY(-2px);
+}
+
+.close-btn{
+    margin-top:20px;
+    color:#888;
+    cursor:pointer;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+    .hero-container{
+        grid-template-columns:1fr;
+        text-align:center;
+    }
+
+    .hero-text h1{
+        font-size:52px;
+    }
+
+    .hero-buttons{
+        justify-content:center;
+    }
+}
+
+@media(max-width:650px){
+
+    .hero-text h1{
+        font-size:40px;
+    }
+
+    .white{
+        width:42px;
+        height:180px;
+    }
+
+    .black{
+        width:28px;
+        height:110px;
+    }
+
+    .b1{ left:29px; }
+    .b2{ left:71px; }
+    .b3{ left:155px; }
+    .b4{ left:197px; }
+    .b5{ left:239px; }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav>
+
+    <div class="logo">
+        Type<span>Tone</span>
+    </div>
+
+    <div class="nav-buttons">
+
+        <button class="nav-btn signin" onclick="openModal()">
+            Sign In
+        </button>
+
+        <button class="nav-btn signup" onclick="openModal()">
+            Sign Up
+        </button>
+
+    </div>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+    <div class="hero-container">
+
+        <div class="hero-text">
+
+            <h1>
+                The Piano Built <br>
+                For <span>Fast Typists</span>
+            </h1>
+
+            <p>
+                Play piano directly from your laptop keyboard with
+                optimized ergonomic keybindings designed for speed,
+                comfort and musical flow.
+                No MIDI keyboard required.
+            </p>
+
+            <div class="hero-buttons">
+
+                <button class="hero-btn primary" onclick="openModal()">
+                    Start Playing
+                </button>
+
+                <button class="hero-btn secondary">
+                    Watch Demo
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Piano Visual -->
+
+        <div class="visual">
+
+            <div class="piano-box">
+
+                <div class="keys">
+
+                    <div class="white"></div>
+                    <div class="white"></div>
+                    <div class="white"></div>
+                    <div class="white"></div>
+                    <div class="white"></div>
+                    <div class="white"></div>
+                    <div class="white"></div>
+
+                    <div class="black b1"></div>
+                    <div class="black b2"></div>
+                    <div class="black b3"></div>
+                    <div class="black b4"></div>
+                    <div class="black b5"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- FEATURES -->
+
+<section class="features">
+
+    <h2 class="section-title">
+        Why TypeTone?
+    </h2>
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>⚡ Ergonomic Layout</h3>
+
+            <p>
+                Specially designed keyboard mapping that
+                removes awkward jumps while typing melodies.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>🎹 Real Piano Feel</h3>
+
+            <p>
+                Web Audio powered responsive sound engine
+                with instant low-latency playback.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>⌨️ Built For Typists</h3>
+
+            <p>
+                Play music naturally using the same
+                muscle memory used for fast typing.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- LOGIN MODAL -->
+
+<div class="modal" id="authModal">
+
+    <div class="modal-content">
+
+        <h2>
+            Welcome to TypeTone
+        </h2>
+
+        <p>
+            Continue with Google to save your profile,
+            access dashboard and use piano tools.
+        </p>
+
+        <button class="google-btn" onclick="googleLogin()">
+            Continue with Google
+        </button>
+
+        <div class="close-btn" onclick="closeModal()">
+            Close
+        </div>
+
+    </div>
+
+</div>
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+/* ========= FIREBASE IMPORTS ========= */
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+/* ========= YOUR FIREBASE CONFIG ========= */
+
+const firebaseConfig = {
+
+    apiKey: "YOUR_API_KEY",
+
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+
+    projectId: "YOUR_PROJECT_ID",
+
+    storageBucket: "YOUR_PROJECT.appspot.com",
+
+    messagingSenderId: "YOUR_SENDER_ID",
+
+    appId: "YOUR_APP_ID"
+};
+
+/* ========= INITIALIZE ========= */
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const provider = new GoogleAuthProvider();
+
+/* ========= GOOGLE LOGIN ========= */
+
+window.googleLogin = async function(){
+
+    try{
+
+        const result =
+            await signInWithPopup(auth, provider);
+
+        const user = result.user;
+
+        console.log(user);
+
+        /*
+        NEXT STEP:
+        Check if new user exists in database.
+
+        If NEW USER:
+            redirect to register.html
+
+        Else:
+            redirect to dashboard.html
+        */
+
+        alert(
+            "Login successful! Next we connect database + dashboard."
+        );
+
+    }
+    catch(error){
+
+        console.log(error);
+
+        alert("Login failed.");
+
+    }
+}
+
+</script>
+
+<script>
+
+/* ========= MODAL ========= */
+
+function openModal(){
+
+    document.getElementById("authModal")
+    .style.display = "flex";
+}
+
+function closeModal(){
+
+    document.getElementById("authModal")
+    .style.display = "none";
+}
+
+window.openModal = openModal;
+window.closeModal = closeModal;
+
+</script>
+
+</body>
+</html>
