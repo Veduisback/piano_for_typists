@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Dashboard</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#111;
+    color:white;
+}
+
+nav{
+    background:#1d2230;
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+}
+
+.container{
+    padding:40px;
+}
+
+.card{
+    background:#1d2230;
+    padding:30px;
+    border-radius:20px;
+    margin-top:20px;
+    cursor:pointer;
+}
+
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+    <h2>TypeTone</h2>
+
+    <button onclick="logout()">
+        Logout
+    </button>
+
+</nav>
+
+<div class="container">
+
+    <h1 id="welcome"></h1>
+
+    <div class="card"
+         onclick="window.location.href='piano.html'">
+
+        🎹 Piano For Typists
+
+    </div>
+
+    <div class="card">
+
+        ⌨️ Typing Speed Test
+        <br><br>
+        Coming Soon
+
+    </div>
+
+</div>
+
+<script>
+
+const user =
+    JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+
+    window.location.href = "index.html";
+}
+
+document.getElementById("welcome")
+.innerText =
+    "Hello, " + user.name;
+
+function logout(){
+
+    localStorage.clear();
+
+    window.location.href =
+        "index.html";
+}
+
+</script>
+
+</body>
+</html>
