@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Complete Registration</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#111;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    background:#1d2230;
+    padding:40px;
+    border-radius:20px;
+    width:350px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    margin-top:15px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    margin-top:20px;
+    border:none;
+    border-radius:10px;
+    background:#6ea8ff;
+    font-size:16px;
+    cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>Complete Profile</h2>
+
+    <input
+        type="text"
+        id="name"
+        placeholder="Enter your name"
+    >
+
+    <input
+        type="number"
+        id="age"
+        placeholder="Enter your age"
+    >
+
+    <button onclick="finishSignup()">
+        Continue
+    </button>
+
+</div>
+
+<script type="module">
+
+import { db } from "./firebase.js";
+
+import {
+    doc,
+    setDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const tempUser =
+    JSON.parse(localStorage.getItem("tempUser"));
+
+window.finishSignup = async function(){
+
+    const name =
+        document.getElementById("name").value;
+
+    const age =
+        document.getElementById("age").value;
+
+    if(!name || !age){
+
+        alert("Fill all fields");
+        return;
+    }
+
+    const userData = {
+
+        uid:tempUser.uid,
+
+        email:tempUser.email,
+
+        name:name,
+
+        age:age
+    };
+
+    await setDoc(
+        doc(db, "users", tempUser.uid),
+        userData
+    );
+
+    localStorage.setItem(
+        "user",
+        JSON.stringify(userData)
+    );
+
+    localStorage.removeItem("tempUser");
+
+    window.location.href =
+        "dashboard.html";
+}
+
+</script>
+
+</body>
+</html>
