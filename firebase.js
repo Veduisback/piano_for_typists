@@ -13,17 +13,13 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
 
-    apiKey: "YOUR_API_KEY",
+    apiKey: "AIzaSyBMwku1ayb7Xsx-ZP6twXnYnIbhhZgb2WM",
+    authDomain: "pianofortypist.firebaseapp.com",
+    projectId: "pianofortypist",
 
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-
-    projectId: "YOUR_PROJECT_ID",
-
-    storageBucket: "YOUR_PROJECT.appspot.com",
-
-    messagingSenderId: "YOUR_SENDER_ID",
-
-    appId: "YOUR_APP_ID"
+    storageBucket: "pianofortypist.firebasestorage.app",
+    messagingSenderId: "239631451993",
+    appId: "1:239631451993:web:4bebe5ff8799c35ca66e48",
 };
 
 // INITIALIZE
