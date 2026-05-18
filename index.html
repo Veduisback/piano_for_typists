@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>2 Octave Keyboard Piano</title>
+
+  <style>
+    body{
+      margin:0;
+      background:#111;
+      font-family:Arial, sans-serif;
+      color:white;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+    }
+
+    h1{
+      margin-bottom:10px;
+    }
+
+    .info{
+      margin-bottom:25px;
+      color:#bbb;
+      text-align:center;
+      line-height:1.6;
+    }
+
+    .piano{
+      position:relative;
+      display:flex;
+      user-select:none;
+    }
+
+    .white{
+      width:80px;
+      height:300px;
+      background:white;
+      border:2px solid #222;
+      border-radius:0 0 10px 10px;
+      position:relative;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding-bottom:15px;
+      font-weight:bold;
+      color:black;
+      transition:0.08s;
+    }
+
+    .white.active{
+      background:#ffd54f;
+      transform:translateY(4px);
+    }
+
+    .black{
+      width:50px;
+      height:180px;
+      background:black;
+      position:absolute;
+      z-index:10;
+      border-radius:0 0 8px 8px;
+      color:white;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding-bottom:10px;
+      font-size:14px;
+      transition:0.08s;
+    }
+
+    .black.active{
+      background:#ff9800;
+      transform:translateY(4px);
+    }
+
+    /* Black key positions */
+    .b1{ left:55px; }
+    .b2{ left:135px; }
+    .b3{ left:295px; }
+    .b4{ left:375px; }
+    .b5{ left:455px; }
+
+    .b6{ left:615px; }
+    .b7{ left:695px; }
+    .b8{ left:855px; }
+    .b9{ left:935px; }
+    .b10{ left:1015px; }
+  </style>
+</head>
+<body>
+
+  <h1>🎹 Laptop Keyboard Piano</h1>
+
+  <div class="info">
+    First Octave:<br>
+    Q W E R T Y U → C D E F G A B<br>
+    1 2 3 4 5 → C# D# F# G# A#<br><br>
+
+    Second Octave:<br>
+    Z X C V B N M → C D E F G A B<br>
+    A S D F G → C# D# F# G# A#
+  </div>
+
+  <div class="piano">
+
+    <!-- WHITE KEYS OCTAVE 1 -->
+    <div class="white" data-key="q">Q</div>
+    <div class="white" data-key="w">W</div>
+    <div class="white" data-key="e">E</div>
+    <div class="white" data-key="r">R</div>
+    <div class="white" data-key="t">T</div>
+    <div class="white" data-key="y">Y</div>
+    <div class="white" data-key="u">U</div>
+
+    <!-- WHITE KEYS OCTAVE 2 -->
+    <div class="white" data-key="z">Z</div>
+    <div class="white" data-key="x">X</div>
+    <div class="white" data-key="c">C</div>
+    <div class="white" data-key="v">V</div>
+    <div class="white" data-key="b">B</div>
+    <div class="white" data-key="n">N</div>
+    <div class="white" data-key="m">M</div>
+
+    <!-- BLACK KEYS OCTAVE 1 -->
+    <div class="black b1" data-key="1">1</div>
+    <div class="black b2" data-key="2">2</div>
+    <div class="black b3" data-key="3">3</div>
+    <div class="black b4" data-key="4">4</div>
+    <div class="black b5" data-key="5">5</div>
+
+    <!-- BLACK KEYS OCTAVE 2 -->
+    <div class="black b6" data-key="a">A</div>
+    <div class="black b7" data-key="s">S</div>
+    <div class="black b8" data-key="d">D</div>
+    <div class="black b9" data-key="f">F</div>
+    <div class="black b10" data-key="g">G</div>
+
+  </div>
+
+  <script>
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    const notes = {
+
+      // Octave 1
+      q:261.63, // C4
+      "1":277.18, // C#4
+      w:293.66, // D4
+      "2":311.13, // D#4
+      e:329.63, // E4
+      r:349.23, // F4
+      "3":369.99, // F#4
+      t:392.00, // G4
+      "4":415.30, // G#4
+      y:440.00, // A4
+      "5":466.16, // A#4
+      u:493.88, // B4
+
+      // Octave 2
+      z:523.25, // C5
+      a:554.37, // C#5
+      x:587.33, // D5
+      s:622.25, // D#5
+      c:659.25, // E5
+      v:698.46, // F5
+      d:739.99, // F#5
+      b:783.99, // G5
+      f:830.61, // G#5
+      n:880.00, // A5
+      g:932.33, // A#5
+      m:987.77  // B5
+    };
+
+    function playSound(freq, key){
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.type = "sine";
+      oscillator.frequency.value = freq;
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioContext.currentTime + 1
+      );
+
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 1);
+
+      // Key animation
+      const keyElement = document.querySelector(`[data-key="${key}"]`);
+      if(keyElement){
+        keyElement.classList.add("active");
+
+        setTimeout(() => {
+          keyElement.classList.remove("active");
+        }, 120);
+      }
+    }
+
+    document.addEventListener("keydown", (e) => {
+      const key = e.key.toLowerCase();
+
+      if(notes[key]){
+        playSound(notes[key], key);
+      }
+    });
+  </script>
+
+</body>
+</html>
