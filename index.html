@@ -486,44 +486,21 @@ nav{
 
 <script type="module">
 
-/* ========= FIREBASE IMPORTS ========= */
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { auth, db } from "./firebase.js";
 
 import {
-    getAuth,
     GoogleAuthProvider,
     signInWithPopup
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-/* ========= YOUR FIREBASE CONFIG ========= */
-
-const firebaseConfig = {
-
-    apiKey: "YOUR_API_KEY",
-
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-
-    projectId: "YOUR_PROJECT_ID",
-
-    storageBucket: "YOUR_PROJECT.appspot.com",
-
-    messagingSenderId: "YOUR_SENDER_ID",
-
-    appId: "YOUR_APP_ID"
-};
-
-/* ========= INITIALIZE ========= */
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
+import {
+    doc,
+    getDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const provider = new GoogleAuthProvider();
-
-/* ========= GOOGLE LOGIN ========= */
 
 window.googleLogin = async function(){
 
@@ -534,22 +511,42 @@ window.googleLogin = async function(){
 
         const user = result.user;
 
-        console.log(user);
+        // CHECK USER EXISTS
 
-        /*
-        NEXT STEP:
-        Check if new user exists in database.
+        const userRef =
+            doc(db, "users", user.uid);
 
-        If NEW USER:
-            redirect to register.html
+        const userSnap =
+            await getDoc(userRef);
 
-        Else:
-            redirect to dashboard.html
-        */
+        // EXISTING USER
 
-        alert(
-            "Login successful! Next we connect database + dashboard."
-        );
+        if(userSnap.exists()){
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(userSnap.data())
+            );
+
+            window.location.href =
+                "dashboard.html";
+        }
+
+        // NEW USER
+
+        else{
+
+            localStorage.setItem(
+                "tempUser",
+                JSON.stringify({
+                    uid:user.uid,
+                    email:user.email
+                })
+            );
+
+            window.location.href =
+                "register.html";
+        }
 
     }
     catch(error){
@@ -557,12 +554,10 @@ window.googleLogin = async function(){
         console.log(error);
 
         alert("Login failed.");
-
     }
 }
 
 </script>
-
 <script>
 
 /* ========= MODAL ========= */
