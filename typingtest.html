@@ -229,7 +229,7 @@ const passages = [
 
 let selectedPassage = "";
 let timerStarted = false;
-let timeLeft = 120;
+let timeLeft = 30;
 let timer;
 let correctChars = 0;
 
@@ -331,7 +331,7 @@ function startTimer(){
 
 function calculateWPS(){
 
-    const timeSpent = 120 - timeLeft;
+    const timeSpent = 30 - timeLeft;
 
     if(timeSpent <= 0) return;
 
@@ -392,7 +392,7 @@ window.restartTest = function(){
 
     timerStarted = false;
 
-    timeLeft = 120;
+    timeLeft = 30;
 
     correctChars = 0;
 
