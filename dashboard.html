@@ -1,520 +1,425 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - TypeTone</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --bg-color: #030304;
-            --text-main: #ffffff;
-            --text-muted: #94a3b8;
-            --text-dark: #cbd5e1;
-            --accent: #60a5fa;
-            --neon-blue: rgba(59, 130, 246, 0.8);
-            --neon-purple: rgba(139, 92, 246, 0.8);
-            --card-bg: rgba(255, 255, 255, 0.02);
-            --card-border: rgba(255, 255, 255, 0.05);
-            --card-border-hover: rgba(255, 255, 255, 0.15);
-        }
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<title>Dashboard - TypeTone</title>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+<link rel="preconnect"
+      href="https://fonts.googleapis.com">
 
-        /* Background Orbs */
-        .bg-gradients {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.3;
-            animation: drift 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .orb-1 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, #1e3a8a 0%, transparent 70%);
-            top: -100px;
-            right: -100px;
-        }
-        .orb-2 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, #581c87 0%, transparent 70%);
-            bottom: -200px;
-            left: -100px;
-            animation-delay: -5s;
-        }
-        
-        @keyframes drift {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(30px, 40px) scale(1.1); }
-            100% { transform: translate(-20px, 20px) scale(0.9); }
-        }
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
 
-        /* Navbar */
-        nav {
-            padding: 20px 8%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            background: rgba(3, 3, 4, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            position: sticky;
-            top: 0;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-        .logo-icon {
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
-            border-radius: 6px;
-            box-shadow: 0 0 15px rgba(96, 165, 250, 0.5);
-        }
-        .logo span {
-            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .profile-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet">
 
-        .btn-logout {
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(255,255,255,0.05);
-            color: var(--text-muted);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .btn-logout:hover {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            border-color: rgba(255,255,255,0.2);
-        }
+<style>
 
-        /* Main Content */
-        main {
-            flex: 1;
-            padding: 60px 8%;
-            position: relative;
-            z-index: 1;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
+:root{
+    --bg:#030304;
+    --card:rgba(255,255,255,0.03);
+    --border:rgba(255,255,255,0.08);
+    --text:#fff;
+    --muted:#94a3b8;
+    --accent:#60a5fa;
+}
 
-        .welcome-section {
-            margin-bottom: 60px;
-            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-        }
-        .welcome-title {
-            font-size: clamp(32px, 5vw, 48px);
-            font-weight: 800;
-            letter-spacing: -1px;
-            margin-bottom: 16px;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .welcome-subtitle {
-            color: var(--text-muted);
-            font-size: 18px;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        /* Stats Section */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
-            margin-bottom: 60px;
-            opacity: 0;
-            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s forwards;
-        }
-        .stat-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s, border-color 0.3s;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(96, 165, 250, 0.3);
-        }
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, #60a5fa, transparent);
-            opacity: 0.5;
-        }
-        .stat-value {
-            font-size: 36px;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: baseline;
-            gap: 4px;
-        }
-        .stat-label {
-            color: var(--text-muted);
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:white;
+    min-height:100vh;
+    overflow-x:hidden;
+}
 
-        /* Dashboard Cards */
-        .section-heading {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 30px;
-            color: #f8fafc;
-            opacity: 0;
-            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards;
-        }
-        
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 24px;
-            opacity: 0;
-            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s forwards;
-        }
+.bg{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+}
 
-        .dash-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-            padding: 32px;
-            cursor: pointer;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            height: 100%;
-        }
-        
-        .dash-card.disabled {
-            cursor: default;
-        }
-        
-        .dash-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .dash-card:hover::before {
-            opacity: 1;
-        }
+.orb{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:0.35;
+}
 
-        .dash-card:hover:not(.disabled) {
-            transform: translateY(-8px);
-            border-color: var(--card-border-hover);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 20px rgba(96, 165, 250, 0.1);
-            background: rgba(255, 255, 255, 0.04);
-        }
+.orb1{
+    width:500px;
+    height:500px;
+    background:#2563eb;
+    top:-150px;
+    right:-120px;
+}
 
-        .dash-card > * {
-            position: relative;
-            z-index: 2;
-        }
+.orb2{
+    width:500px;
+    height:500px;
+    background:#7c3aed;
+    bottom:-180px;
+    left:-120px;
+}
 
-        .card-icon {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 16px rgba(0,0,0,0.2);
-        }
-        
-        .dash-card.primary .card-icon {
-            background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(139, 92, 246, 0.1));
-            border-color: rgba(96, 165, 250, 0.3);
-            box-shadow: 0 0 20px rgba(96, 165, 250, 0.2);
-        }
+nav{
+    padding:22px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(0,0,0,0.5);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(255,255,255,0.05);
+    position:sticky;
+    top:0;
+}
 
-        .card-title {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #f8fafc;
-            letter-spacing: -0.5px;
-        }
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:26px;
+    font-weight:800;
+}
 
-        .card-desc {
-            color: var(--text-muted);
-            line-height: 1.6;
-            font-size: 15px;
-            flex-grow: 1;
-        }
-        
-        .badge {
-            position: absolute;
-            top: 32px;
-            right: 32px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 4px 12px;
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            backdrop-filter: blur(5px);
-        }
+.logo-box{
+    width:22px;
+    height:22px;
+    border-radius:6px;
+    background:linear-gradient(135deg,#60a5fa,#8b5cf6);
+}
 
-        .card-action {
-            margin-top: 24px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 14px;
-            opacity: 0;
-            transform: translateX(-10px);
-            transition: all 0.3s ease;
-        }
-        
-        .dash-card:hover:not(.disabled) .card-action {
-            opacity: 1;
-            transform: translateX(0);
-        }
+.logout-btn{
+    padding:12px 22px;
+    border:none;
+    border-radius:12px;
+    background:rgba(255,255,255,0.06);
+    color:white;
+    cursor:pointer;
+    font-weight:600;
+}
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+main{
+    width:90%;
+    max-width:1300px;
+    margin:auto;
+    padding:60px 0;
+}
 
-        /* Footer */
-        footer {
-            padding: 40px 8%;
-            text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-top: auto;
-            position: relative;
-            z-index: 1;
-        }
-        
-        @media (max-width: 768px) {
-            .welcome-title { font-size: 32px; }
-            .cards-grid { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            nav { padding: 15px 5%; }
-            main { padding: 40px 5%; }
-        }
-        @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+.welcome{
+    margin-bottom:50px;
+}
+
+.welcome h1{
+    font-size:48px;
+    margin-bottom:10px;
+}
+
+.welcome p{
+    color:var(--muted);
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:25px;
+    margin-bottom:60px;
+}
+
+.stat-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:24px;
+    padding:30px;
+    backdrop-filter:blur(20px);
+}
+
+.stat-title{
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:12px;
+    text-transform:uppercase;
+}
+
+.stat-value{
+    font-size:42px;
+    font-weight:800;
+}
+
+.section-title{
+    font-size:26px;
+    margin-bottom:25px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:26px;
+    padding:35px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    border-color:rgba(255,255,255,0.15);
+}
+
+.icon{
+    font-size:38px;
+    margin-bottom:18px;
+}
+
+.card h3{
+    font-size:24px;
+    margin-bottom:12px;
+}
+
+.card p{
+    color:var(--muted);
+    line-height:1.7;
+    margin-bottom:22px;
+}
+
+.launch{
+    color:#60a5fa;
+    font-weight:700;
+}
+
+footer{
+    text-align:center;
+    padding:40px;
+    color:var(--muted);
+}
+
+</style>
 </head>
+
 <body>
 
-    <div class="bg-gradients">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
+<div class="bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+</div>
+
+<nav>
+
+    <div class="logo">
+        <div class="logo-box"></div>
+        TypeTone
     </div>
 
-    <nav>
-        <div class="logo" onclick="window.location.href='index.html'">
-            <div class="logo-icon"></div>
-            <span>TypeTone</span>
-        </div>
-        <div class="profile-section">
-            <button class="btn-logout" onclick="logout()">Logout</button>
-        </div>
-    </nav>
+    <!-- BUTTON KEPT INTACT -->
+    <button class="logout-btn"
+            onclick="logout()">
 
-    <main>
-        <div class="welcome-section">
-            <h1 class="welcome-title" id="welcome">Loading...</h1>
-            <p class="welcome-subtitle">Welcome to your dashboard. Ready to make some music?</p>
-        </div>
+        Logout
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value"><span class="counter" data-target="42">0</span></div>
-                <div class="stat-label">Total Sessions</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value"><span class="counter" data-target="118">0</span> <span style="font-size: 16px; color: var(--text-muted); font-weight: 500;">WPM</span></div>
-                <div class="stat-label">Top Speed</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value"><span class="counter" data-target="98">0</span> <span style="font-size: 16px; color: var(--text-muted); font-weight: 500;">%</span></div>
-                <div class="stat-label">Avg Accuracy</div>
-            </div>
-        </div>
+    </button>
 
-        <h2 class="section-heading">Applications</h2>
-        <div class="cards-grid" style="margin-bottom: 50px;">
-            <div class="dash-card primary" onclick="window.location.href='piano.html'">
-                <div class="card-icon">🎹</div>
-                <h3 class="card-title">Piano For Typists</h3>
-                <p class="card-desc">Turn your computer keyboard into a fully functional, highly responsive musical instrument.</p>
-                <div class="card-action">Launch App <span style="font-size: 18px;">→</span></div>
+</nav>
+
+<main>
+
+    <div class="welcome">
+
+        <h1 id="welcome">
+            Loading...
+        </h1>
+
+        <p>
+            Welcome back to your dashboard.
+        </p>
+
+    </div>
+
+    <div class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Latest WPM
             </div>
 
-            <div class="dash-card primary" onclick="window.location.href='typingtest.html'">
-                <div class="card-icon">⌨️</div>
-                <h3 class="card-title">Typing Speed Test</h3>
-                <p class="card-desc">Measure your WPM and accuracy with our advanced testing engine.</p>
-                <div class="card-action">Start Test <span style="font-size: 18px;">→</span></div>
+            <div class="stat-value"
+                 id="latestWPM">
+
+                0
+
             </div>
+
         </div>
 
-        <h2 class="section-heading">Features & Settings</h2>
-        <div class="cards-grid">
-            <div class="dash-card disabled">
-                <div class="badge">Coming Soon</div>
-                <div class="card-icon" style="filter: grayscale(1) opacity(0.5);">🎼</div>
-                <h3 class="card-title">Saved Sessions</h3>
-                <p class="card-desc">Record, playback, and export your musical performances and typing sessions.</p>
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Tests Attempted
             </div>
 
-            <div class="dash-card disabled">
-                <div class="badge">Coming Soon</div>
-                <div class="card-icon" style="filter: grayscale(1) opacity(0.5);">📈</div>
-                <h3 class="card-title">Performance Analytics</h3>
-                <p class="card-desc">Detailed graphs and insights into your typing speed progression and key accuracy.</p>
+            <div class="stat-value"
+                 id="testsAttempted">
+
+                0
+
             </div>
 
-            <div class="dash-card disabled">
-                <div class="badge">Coming Soon</div>
-                <div class="card-icon" style="filter: grayscale(1) opacity(0.5);">⚙️</div>
-                <h3 class="card-title">Keybind Settings</h3>
-                <p class="card-desc">Fully customize your piano layout, octaves, and instrument sound profiles.</p>
-            </div>
-
-            <div class="dash-card disabled">
-                <div class="badge">Coming Soon</div>
-                <div class="card-icon" style="filter: grayscale(1) opacity(0.5);">🌙</div>
-                <h3 class="card-title">Dark Audio Engine</h3>
-                <p class="card-desc">Advanced audio synthesis routing for creating custom waveforms and effects.</p>
-            </div>
         </div>
-    </main>
 
-    <footer>
-        <p>&copy; 2026 TypeTone. All rights reserved.</p>
-    </footer>
+        <div class="stat-card">
 
-    <script>
-        const user = JSON.parse(localStorage.getItem("user"));
+            <div class="stat-title">
+                Age
+            </div>
 
-        if(!user){
-            window.location.href = "index.html";
+            <div class="stat-value"
+                 id="age">
+
+                0
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <h2 class="section-title">
+        Applications
+    </h2>
+
+    <div class="cards">
+
+        <!-- BUTTONS KEPT INTACT -->
+
+        <div class="card"
+             onclick="window.location.href='piano.html'">
+
+            <div class="icon">🎹</div>
+
+            <h3>Piano For Typists</h3>
+
+            <p>
+                Turn your keyboard into a musical piano.
+            </p>
+
+            <div class="launch">
+                Launch →
+            </div>
+
+        </div>
+
+        <div class="card"
+             onclick="window.location.href='typingtest.html'">
+
+            <div class="icon">⌨️</div>
+
+            <h3>Typing Speed Test</h3>
+
+            <p>
+                Test your speed and save scores live.
+            </p>
+
+            <div class="launch">
+                Start Test →
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<footer>
+
+    © 2026 TypeTone
+
+</footer>
+
+<script type="module">
+
+import { db } from './firebase.js';
+
+import {
+    doc,
+    getDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const user =
+    JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+
+    window.location.href =
+        "index.html";
+}
+
+document.getElementById("welcome")
+.innerText =
+    "Hello, " + user.name;
+
+async function loadData(){
+
+    try{
+
+        const userRef =
+            doc(db,"users",user.uid);
+
+        const snap =
+            await getDoc(userRef);
+
+        if(snap.exists()){
+
+            const data = snap.data();
+
+            document
+            .getElementById("latestWPM")
+            .innerText =
+                data.latestWPM || 0;
+
+            document
+            .getElementById("testsAttempted")
+            .innerText =
+                data.testsAttempted || 0;
+
+            document
+            .getElementById("age")
+            .innerText =
+                data.age || "N/A";
         }
+    }
 
-        document.getElementById("welcome").innerText = "Hello, " + (user ? user.name : "Guest");
+    catch(error){
 
-        function logout(){
-            localStorage.clear();
-            window.location.href = "index.html";
-        }
+        console.log(error);
+    }
+}
 
-        const counters = document.querySelectorAll('.counter');
-        const speed = 200; 
+loadData();
 
-        counters.forEach(counter => {
-            const updateCount = () => {
-                const target = +counter.getAttribute('data-target');
-                const count = +counter.innerText;
-                const inc = target / speed;
+window.logout = function(){
 
-                if (count < target) {
-                    counter.innerText = Math.ceil(count + inc);
-                    setTimeout(updateCount, 10);
-                } else {
-                    counter.innerText = target;
-                }
-            };
-            
-            setTimeout(updateCount, 500); 
-        });
+    localStorage.clear();
 
-        document.querySelectorAll('.dash-card').forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-            });
-        });
-    </script>
+    window.location.href =
+        "index.html";
+}
+
+</script>
+
 </body>
 </html>
