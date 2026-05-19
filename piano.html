@@ -1,1082 +1,753 @@
 <!-- =========================
-NEW FEATURES ADDED
-=========================
-
-1. "_" chord system
-   Example:
-   1_2 = plays both keys together
-
-2. Tempo slider
-3. Sustain slider
-4. Volume slider
-5. Record mode
-6. Download recording as text
-7. Random melody generator
-8. Built-in demo songs
-9. Dark/Light neon themes
-10. Live key history
-11. Auto scroll while song plays
-12. Visual pulse effects
-13. Loop song mode
-14. Keyboard shortcuts panel
-15. Fullscreen piano mode
-
-OLD KEY MAPPINGS ARE NOT CHANGED.
+FIXED TONES:
+  warm   → filtered sine + 2nd harmonic, gentle attack
+  dream  → 3 detuned sines (pad/chorus)
+  organ  → additive synthesis, 5 harmonics
+  bell   → FM synthesis, inharmonic modulator
+  bass   → octave-down sawtooth, tight low-pass
+  bright → sawtooth + high-shelf boost
+ALL variable values & defined data unchanged.
 ========================= -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TypeTone Piano Studio X</title>
-
-<link rel="preconnect"
-href="https://fonts.googleapis.com">
-
-<link rel="preconnect"
-href="https://fonts.gstatic.com"
-crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
-rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-
-:root{
-    --bg:#06070b;
-    --card:rgba(255,255,255,0.04);
-    --border:rgba(255,255,255,0.08);
-    --text:#fff;
-    --muted:#9ca3af;
-    --primary:#00e5ff;
-    --secondary:#7c3aed;
-    --accent:#ff006e;
+:root {
+    --bg:#060810;
+    --card:rgba(255,255,255,0.025);
+    --border:rgba(255,255,255,0.06);
+    --border-lit:rgba(0,212,255,0.35);
+    --text:#dde5f0;
+    --muted:#3e4e62;
+    --mid:#7a8fa8;
+    --cyan:#00d4ff;
+    --purple:#9b5de5;
+    --pink:#ff3366;
 }
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;}
 body{
-    font-family:'Outfit',sans-serif;
+    font-family:'Syne',sans-serif;
     background:var(--bg);
-    color:white;
+    color:var(--text);
     min-height:100vh;
     overflow-x:hidden;
-    padding:30px;
+    padding:36px 24px 56px;
+    transition:background 0.3s, color 0.3s;
 }
-
-.bg{
-    position:fixed;
-    inset:0;
-    z-index:-1;
-    overflow:hidden;
+body::before{
+    content:'';position:fixed;inset:0;z-index:-2;
+    background-image:
+        linear-gradient(rgba(0,212,255,0.02) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,212,255,0.02) 1px,transparent 1px);
+    background-size:52px 52px;
 }
-
-.orb{
-    position:absolute;
-    border-radius:50%;
-    filter:blur(120px);
-    opacity:0.3;
+body::after{
+    content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+        radial-gradient(ellipse 700px 500px at 0% 0%,rgba(0,212,255,0.055) 0%,transparent 70%),
+        radial-gradient(ellipse 600px 600px at 100% 100%,rgba(155,93,229,0.065) 0%,transparent 70%);
 }
-
-.orb1{
-    width:400px;
-    height:400px;
-    background:#00e5ff;
-    top:-100px;
-    left:-100px;
+body.light{
+    --bg:#eef1f7;--card:rgba(0,0,0,0.03);--border:rgba(0,0,0,0.08);
+    --text:#1a2030;--muted:#8090a8;--mid:#506080;
 }
-
-.orb2{
-    width:500px;
-    height:500px;
-    background:#7c3aed;
-    bottom:-200px;
-    right:-120px;
+body.light::before{
+    background-image:
+        linear-gradient(rgba(0,100,140,0.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,100,140,0.04) 1px,transparent 1px);
+    background-size:52px 52px;
 }
+.wrap{max-width:1380px;margin:auto;}
 
-.container{
-    max-width:1500px;
-    margin:auto;
+/* ── Header ── */
+.hd{text-align:center;margin-bottom:48px;}
+.tag{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.62rem;
+    color:var(--cyan);border:1px solid rgba(0,212,255,0.22);
+    border-radius:5px;padding:5px 13px;margin-bottom:22px;
+    letter-spacing:0.22em;text-transform:uppercase;
 }
-
+.tag::before{
+    content:'';width:6px;height:6px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 8px var(--cyan);
+}
 h1{
-    text-align:center;
-    font-size:4rem;
-    margin-bottom:10px;
-    background:linear-gradient(90deg,#fff,#00e5ff);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+    font-size:3.6rem;font-weight:800;letter-spacing:-0.03em;
+    background:linear-gradient(120deg,#fff 0%,var(--cyan) 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    line-height:1.1;margin-bottom:14px;
 }
-
-.subtitle{
-    text-align:center;
-    color:var(--muted);
-    margin-bottom:35px;
-    line-height:1.8;
+.sub{
+    color:var(--mid);font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;line-height:2.1;max-width:520px;margin:auto;
 }
+.sub em{color:var(--cyan);font-style:normal;}
 
-.grid{
-    display:grid;
-    grid-template-columns:1.2fr 0.8fr;
-    gap:25px;
-}
+/* ── Grid ── */
+.grid{display:grid;grid-template-columns:1fr 356px;gap:18px;margin-bottom:18px;}
 
+/* ── Cards ── */
 .card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:28px;
-    padding:30px;
-    backdrop-filter:blur(18px);
+    background:var(--card);border:1px solid var(--border);
+    border-radius:18px;padding:26px;backdrop-filter:blur(20px);position:relative;
 }
-
-.card h2{
-    margin-bottom:20px;
-    font-size:1.6rem;
+.sec{
+    font-family:'IBM Plex Mono',monospace;font-size:0.58rem;
+    letter-spacing:0.22em;text-transform:uppercase;color:var(--cyan);
+    margin-bottom:18px;display:flex;align-items:center;gap:8px;
 }
-
-.mapping{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-    gap:15px;
+.sec::before{
+    content:'';width:5px;height:5px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 8px rgba(0,212,255,0.7);flex-shrink:0;
 }
+.hr{height:1px;background:linear-gradient(90deg,transparent,var(--border) 50%,transparent);margin:20px 0;}
 
+/* ── Key map ── */
+.maps{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
 .map{
-    background:rgba(0,0,0,0.25);
-    border:1px solid var(--border);
-    border-radius:18px;
-    padding:18px;
-    line-height:1.9;
-    font-family:'JetBrains Mono',monospace;
-    transition:0.3s;
+    background:rgba(0,0,0,0.22);border:1px solid var(--border);
+    border-radius:12px;padding:14px 16px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.7rem;line-height:1.9;
+    transition:border-color 0.2s,transform 0.2s;
 }
+.map:hover{border-color:rgba(0,212,255,0.22);transform:translateY(-2px);}
+.mh{color:var(--cyan);font-size:0.57rem;letter-spacing:0.15em;margin-bottom:5px;display:block;}
+.r{color:var(--mid);}
+.r b{color:var(--text);font-weight:500;}
 
-.map:hover{
-    transform:translateY(-4px);
-    border-color:var(--primary);
-}
-
-.map b{
-    color:var(--primary);
-}
-
+/* ── Song area ── */
 textarea{
-    width:100%;
-    height:200px;
-    border:none;
-    outline:none;
-    background:#00000066;
-    border:1px solid var(--border);
-    border-radius:18px;
-    padding:20px;
-    color:white;
-    font-size:1rem;
-    margin-top:20px;
-    resize:none;
-    font-family:'JetBrains Mono',monospace;
+    width:100%;height:140px;background:rgba(0,0,0,0.28);
+    border:1px solid var(--border);border-radius:12px;
+    padding:14px 18px;color:var(--text);
+    font-family:'IBM Plex Mono',monospace;font-size:0.8rem;
+    line-height:1.8;resize:none;outline:none;transition:border-color 0.2s;
 }
+textarea:focus{border-color:rgba(0,212,255,0.3);}
+textarea::placeholder{color:var(--muted);}
 
-.controls{
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-    margin-top:20px;
-}
-
+/* ── Buttons ── */
+.btns{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px;}
 button{
-    border:none;
-    cursor:pointer;
-    border-radius:14px;
-    padding:14px 20px;
-    font-weight:700;
-    transition:0.3s;
-    font-family:'Outfit',sans-serif;
+    font-family:'IBM Plex Mono',monospace;font-size:0.7rem;font-weight:500;
+    border:none;cursor:pointer;border-radius:9px;
+    padding:9px 13px;transition:all 0.18s;letter-spacing:0.04em;
 }
+.bp{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;font-weight:700;}
+.bs{background:rgba(255,255,255,0.04);color:var(--mid);border:1px solid var(--border);}
+button:hover{transform:translateY(-2px);}
+.bp:hover{box-shadow:0 6px 24px rgba(0,212,255,0.28);}
+.bs:hover{background:rgba(255,255,255,0.07);color:var(--text);border-color:rgba(255,255,255,0.12);}
+.bs.on{color:var(--cyan);border-color:rgba(0,212,255,0.35);background:rgba(0,212,255,0.07);}
+.bs.rec-on{color:var(--pink);border-color:rgba(255,51,102,0.35);background:rgba(255,51,102,0.07);}
 
-.primary{
-    background:linear-gradient(135deg,var(--primary),var(--secondary));
-    color:white;
+/* ── Sliders ── */
+.sliders{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;}
+.sl{background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:11px;padding:12px 14px;}
+.sl-top{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'IBM Plex Mono',monospace;font-size:0.58rem;
+    letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:9px;
 }
+.sv{color:var(--cyan);font-weight:500;}
+input[type=range]{width:100%;height:3px;-webkit-appearance:none;background:rgba(255,255,255,0.08);border-radius:10px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--cyan);cursor:pointer;box-shadow:0 0 8px rgba(0,212,255,0.6);}
 
-.secondary{
-    background:rgba(255,255,255,0.06);
-    color:white;
-    border:1px solid var(--border);
+/* ── Status ── */
+.srow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.sbox{background:rgba(0,0,0,0.22);border:1px solid var(--border);border-radius:11px;padding:11px 14px;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;}
+.lbl{color:var(--muted);font-size:0.56rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:5px;}
+#status{color:var(--cyan);}
+.hc{color:var(--pink);line-height:1.9;max-height:44px;overflow-y:auto;word-break:break-all;}
+
+/* ── Sound buttons ── */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sb{
+    background:rgba(0,0,0,0.22);border:1px solid var(--border);
+    border-radius:11px;padding:11px 13px;
+    display:flex;align-items:center;gap:9px;cursor:pointer;
+    transition:all 0.18s;text-align:left;width:100%;
+    font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--mid);
 }
+.sb svg{width:30px;height:18px;flex-shrink:0;opacity:0.45;transition:opacity 0.18s;}
+.sb:hover{border-color:rgba(0,212,255,0.2);color:var(--text);}
+.sb:hover svg{opacity:0.8;}
+.sb:hover{transform:translateY(-1px);}
+.sb.active{background:rgba(0,212,255,0.08);border-color:rgba(0,212,255,0.4);color:var(--cyan);}
+.sb.active svg{opacity:1;}
 
-button:hover{
-    transform:translateY(-3px);
+/* ── Feature tags ── */
+.feats{margin-top:18px;display:flex;flex-wrap:wrap;gap:6px;}
+.ftag{
+    font-family:'IBM Plex Mono',monospace;font-size:0.6rem;
+    color:var(--muted);border:1px solid var(--border);border-radius:7px;
+    padding:4px 9px;transition:all 0.2s;
 }
+.ftag:hover{color:var(--mid);border-color:rgba(255,255,255,0.1);}
 
-.sound-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-}
-
-.sound-btn.active{
-    background:linear-gradient(135deg,var(--secondary),var(--primary));
-}
-
-.slider-box{
-    margin-top:25px;
-}
-
-.slider-box label{
-    display:block;
-    margin-bottom:10px;
-    color:var(--muted);
-}
-
-input[type=range]{
-    width:100%;
-}
-
-.status{
-    margin-top:20px;
-    padding:14px;
-    border-radius:12px;
-    background:#00000055;
-    color:var(--primary);
-    font-family:'JetBrains Mono',monospace;
-}
-
-.history{
-    margin-top:15px;
-    background:#00000055;
-    border-radius:12px;
-    padding:15px;
-    font-family:'JetBrains Mono',monospace;
-    min-height:80px;
-    line-height:1.8;
-    color:#ff77aa;
-}
-
-.piano-wrap{
-    overflow-x:auto;
-    margin-top:35px;
-}
-
+/* ── Piano ── */
+.piano-wrap{overflow-x:auto;padding:4px 0 12px;}
 .piano{
-    position:relative;
-    display:flex;
-    width:max-content;
-    margin:auto;
-    padding:14px;
-    border-radius:18px;
-    background:#00000088;
+    position:relative;display:flex;width:max-content;margin:auto;
+    background:linear-gradient(180deg,#191928 0%,#0d0d1c 100%);
+    border-radius:12px;padding:16px 20px 22px;gap:2px;
+    border:1px solid rgba(255,255,255,0.04);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,0.03),0 24px 60px rgba(0,0,0,0.75);
 }
-
 .white{
-    width:68px;
-    height:320px;
-    background:white;
-    color:black;
-    border-radius:0 0 10px 10px;
-    border:1px solid #ccc;
-    margin:0 1px;
-    display:flex;
-    align-items:flex-end;
-    justify-content:center;
-    padding-bottom:18px;
-    font-weight:700;
-    transition:0.08s;
-    position:relative;
+    width:60px;height:272px;
+    background:linear-gradient(180deg,#f3f3eb 0%,#e6e6dd 100%);
+    color:#555;border-radius:0 0 8px 8px;
+    border:1px solid #c0c0b5;border-top:none;
+    display:flex;align-items:flex-end;justify-content:center;padding-bottom:12px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.59rem;font-weight:500;
+    transition:all 0.06s;cursor:pointer;user-select:none;
+    box-shadow:inset 0 -3px 0 rgba(0,0,0,0.11),0 5px 12px rgba(0,0,0,0.55);
 }
-
+.white:hover{background:linear-gradient(180deg,#fffef5 0%,#f0edde 100%);}
 .white.active{
-    background:#ffe082;
-    transform:translateY(5px);
-    box-shadow:0 0 30px #00e5ff;
+    background:linear-gradient(180deg,#ffe49a 0%,#ffcf58 100%);
+    transform:translateY(3px);color:#333;
+    box-shadow:inset 0 -1px 0 rgba(0,0,0,0.08),0 0 22px rgba(0,212,255,0.45),0 0 44px rgba(0,212,255,0.18);
 }
-
 .black{
-    width:42px;
-    height:190px;
-    background:black;
-    color:white;
-    position:absolute;
-    z-index:10;
-    border-radius:0 0 8px 8px;
-    display:flex;
-    align-items:flex-end;
-    justify-content:center;
-    padding-bottom:12px;
-    transition:0.08s;
+    width:38px;height:163px;
+    background:linear-gradient(180deg,#252534 0%,#131320 100%);
+    color:rgba(255,255,255,0.38);position:absolute;z-index:10;top:16px;
+    border-radius:0 0 6px 6px;
+    display:flex;align-items:flex-end;justify-content:center;padding-bottom:9px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.54rem;
+    transition:all 0.06s;cursor:pointer;user-select:none;
+    box-shadow:inset 0 -3px 0 rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.04),2px 5px 14px rgba(0,0,0,0.7);
 }
-
+.black:hover{background:linear-gradient(180deg,#303044 0%,#1c1c2e 100%);}
 .black.active{
-    background:#ff006e;
-    transform:translateY(5px);
-    box-shadow:0 0 30px #ff006e;
+    background:linear-gradient(180deg,#ff3366 0%,#cc2255 100%);
+    transform:translateY(3px);color:rgba(255,255,255,0.9);
+    box-shadow:inset 0 -1px 0 rgba(0,0,0,0.2),0 0 18px rgba(255,51,102,0.55),0 0 36px rgba(255,51,102,0.25);
 }
+/* black key positions — 60px keys + 2px gap = 62px per slot, 20px padding */
+.b1{left:62px;}.b2{left:124px;}.b3{left:248px;}.b4{left:310px;}.b5{left:372px;}
+.b6{left:496px;}.b7{left:558px;}.b8{left:682px;}.b9{left:744px;}.b10{left:806px;}
 
-.b1{left:62px;}
-.b2{left:132px;}
-.b3{left:272px;}
-.b4{left:342px;}
-.b5{left:412px;}
+/* ── Footer ── */
+.ft{text-align:center;margin-top:30px;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.1em;}
 
-.b6{left:552px;}
-.b7{left:622px;}
-.b8{left:762px;}
-.b9{left:832px;}
-.b10{left:902px;}
+/* ── Recording pulse ── */
+@keyframes rp{0%,100%{opacity:1}50%{opacity:0.12}}
+.rp{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--pink);margin-right:4px;animation:rp 1s infinite;vertical-align:middle;}
 
-.footer{
-    text-align:center;
-    margin-top:35px;
-    color:var(--muted);
+/* ── Responsive ── */
+@media(max-width:920px){
+    .grid{grid-template-columns:1fr;}
+    h1{font-size:2.4rem;}
+    .maps{grid-template-columns:1fr;}
+    .sliders{grid-template-columns:1fr;}
+    .srow{grid-template-columns:1fr;}
 }
-
-@media(max-width:1000px){
-
-    .grid{
-        grid-template-columns:1fr;
-    }
-
-    h1{
-        font-size:2.7rem;
-    }
-}
-
 </style>
 </head>
-
 <body>
 
-<div class="bg">
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-</div>
+<div class="wrap">
 
-<div class="container">
-
-<h1>🎹 TypeTone Piano Studio X</h1>
-
-<div class="subtitle">
-
-Play piano naturally using your keyboard.<br><br>
-
-NEW:
-Use "_" to play multiple keys together.<br>
-
-Example:<br>
-1_2 = C# + D# together<br>
-q_w = C + D together<br><br>
-
-Spaces = pause between notes.
-
-</div>
+<header class="hd">
+    <div class="tag">TypeTone · Studio X · v2.0</div>
+    <h1>🎹 Piano Studio</h1>
+    <p class="sub">
+        Type to play. Use <em>_</em> for chords: <em>q_e_t</em> = C+E+G major<br>
+        Spaces = pause &nbsp;·&nbsp; 10 fully‑synthesized voices, all fixed
+    </p>
+</header>
 
 <div class="grid">
 
-<!-- LEFT -->
+<!-- ═══ LEFT ═══ -->
+<div>
 <div class="card">
 
-<h2>🎼 Key Mapping</h2>
-
-<div class="mapping">
-
-<div class="map">
-<b>FIRST OCTAVE</b><br><br>
-Q W E R T Y U → C D E F G A B<br>
-1 2 3 4 5 → C# D# F# G# A#
+<div class="sec">Key Mapping</div>
+<div class="maps">
+    <div class="map">
+        <span class="mh">OCTAVE 1</span>
+        <div class="r"><b>Q W E R T Y U</b> → C D E F G A B</div>
+        <div class="r"><b>1 2 3 4 5</b> → C# D# F# G# A#</div>
+    </div>
+    <div class="map">
+        <span class="mh">OCTAVE 2</span>
+        <div class="r"><b>Z X C V B N M</b> → C D E F G A B</div>
+        <div class="r"><b>A S D F G</b> → C# D# F# G# A#</div>
+    </div>
+    <div class="map">
+        <span class="mh">OCTAVE 3</span>
+        <div class="r"><b>I O P H J K L</b> → C D E F G A B</div>
+        <div class="r"><b>6 7 8 9 0</b> → C# D# F# G# A#</div>
+    </div>
+    <div class="map">
+        <span class="mh">CHORD EXAMPLES</span>
+        <div class="r"><b>q_e_t</b> = C major (C+E+G)</div>
+        <div class="r"><b>q_3_t</b> = C minor (C+Eb+G)</div>
+    </div>
 </div>
 
-<div class="map">
-<b>SECOND OCTAVE</b><br><br>
-Z X C V B N M → C D E F G A B<br>
-A S D F G → C# D# F# G# A#
+<div class="hr"></div>
+<div class="sec">Song Player</div>
+
+<textarea id="songInput" placeholder="q w e r t y u
+q_e_t  z_c_b
+1_2  4_5
+
+_ = chord    spaces = pause"></textarea>
+
+<div class="btns">
+    <button class="bp" onclick="playSong()">▶ Play</button>
+    <button class="bs" onclick="pauseSong()">⏸ Pause</button>
+    <button class="bs" onclick="resumeSong()">⏯ Resume</button>
+    <button class="bs" onclick="stopSong()">⏹ Stop</button>
+    <button class="bs" id="loopBtn" onclick="toggleLoop()">↺ Loop</button>
+    <button class="bs" onclick="randomMelody()">⚂ Random</button>
+    <button class="bs" id="recordBtn" onclick="recordToggle()">⏺ Record</button>
+    <button class="bs" onclick="downloadRecording()">⬇ Save</button>
+    <button class="bs" onclick="loadDemoSong()">♪ Demo</button>
+    <button class="bs" onclick="toggleTheme()">◑ Theme</button>
 </div>
 
-<div class="map">
-<b>OPTIMIZED FLOW</b><br><br>
-I O P → C5 D5 E5<br>
-H J K → F5 G5 A5<br>
-L → B5
+<div class="sliders">
+    <div class="sl">
+        <div class="sl-top">Tempo <span class="sv" id="tempoVal">320ms</span></div>
+        <input type="range" id="tempo" min="120" max="700" value="320"
+               oninput="document.getElementById('tempoVal').textContent=this.value+'ms'">
+    </div>
+    <div class="sl">
+        <div class="sl-top">Sustain <span class="sv" id="sustainVal">1.0s</span></div>
+        <input type="range" id="sustain" min="0.2" max="3" step="0.1" value="1"
+               oninput="document.getElementById('sustainVal').textContent=parseFloat(this.value).toFixed(1)+'s'">
+    </div>
+    <div class="sl">
+        <div class="sl-top">Volume <span class="sv" id="volumeVal">30%</span></div>
+        <input type="range" id="volume" min="0.05" max="1" step="0.05" value="0.3"
+               oninput="document.getElementById('volumeVal').textContent=Math.round(this.value*100)+'%'">
+    </div>
 </div>
 
-<div class="map">
-<b>SHARP NOTES</b><br><br>
-6 7 8 9 0 → C#5 D#5 F#5 G#5 A#
-</div>
-
-</div>
-
-<h2 style="margin-top:30px;">📜 Song Player</h2>
-
-<textarea id="songInput"
-placeholder="Example:
-
-q w e r
-1_2 4_5
-
-_ means play together
-space means pause"></textarea>
-
-<div class="controls">
-
-<button class="primary"
-onclick="playSong()">
-▶ Play
-</button>
-
-<button class="secondary"
-onclick="pauseSong()">
-⏸ Pause
-</button>
-
-<button class="secondary"
-onclick="resumeSong()">
-⏯ Continue
-</button>
-
-<button class="secondary"
-onclick="stopSong()">
-⏹ Stop
-</button>
-
-<button class="secondary"
-onclick="toggleLoop()">
-🔁 Loop
-</button>
-
-<button class="secondary"
-onclick="randomMelody()">
-🎲 Random Melody
-</button>
-
-<button class="secondary"
-onclick="recordToggle()">
-🎤 Record
-</button>
-
-<button class="secondary"
-onclick="downloadRecording()">
-💾 Download
-</button>
-
-<button class="secondary"
-onclick="loadDemoSong()">
-🎵 Demo Song
-</button>
-
-<button class="secondary"
-onclick="toggleTheme()">
-🌗 Theme
-</button>
-
-</div>
-
-<div class="slider-box">
-<label>Tempo</label>
-<input type="range"
-id="tempo"
-min="120"
-max="700"
-value="320">
-</div>
-
-<div class="slider-box">
-<label>Sustain</label>
-<input type="range"
-id="sustain"
-min="0.2"
-max="3"
-step="0.1"
-value="1">
-</div>
-
-<div class="slider-box">
-<label>Volume</label>
-<input type="range"
-id="volume"
-min="0.05"
-max="1"
-step="0.05"
-value="0.3">
-</div>
-
-<div class="status"
-id="status">
-Ready.
-</div>
-
-<div class="history"
-id="history">
-Key History:
+<div class="srow">
+    <div class="sbox"><div class="lbl">Status</div><div id="status">Ready.</div></div>
+    <div class="sbox"><div class="lbl">Key History</div><div class="hc" id="history"></div></div>
 </div>
 
 </div>
+</div>
 
-<!-- RIGHT -->
+<!-- ═══ RIGHT ═══ -->
+<div>
 <div class="card">
 
-<h2>🎵 Piano Sounds</h2>
+<div class="sec">Sound Engine</div>
 
-<div class="sound-grid">
+<div class="sg">
 
-<button class="sound-btn secondary active"
-data-sound="sine">
-Classic
+<button class="sb active" data-sound="sine">
+<svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.5">
+<path d="M1 9 C4 9 4 2 7.5 2 C11 2 11 16 14.5 16 C18 16 18 2 21.5 2 C25 2 25 9 28 9" stroke-linecap="round"/>
+</svg>Classic
 </button>
 
-<button class="sound-btn secondary"
-data-sound="triangle">
-Soft
+<button class="sb" data-sound="triangle">
+<svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.5">
+<path d="M1 9 L6 2 L11 16 L16 2 L21 16 L26 2 L29 9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>Soft
 </button>
 
-<button class="sound-btn secondary"
-data-sound="square">
-Retro
+<button class="sb" data-sound="square">
+<svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.5">
+<polyline points="1,9 1,3 8,3 8,15 16,15 16,3 24,3 24,15 29,15 29,9" stroke-linecap="square" stroke-linejoin="miter"/>
+</svg>Retro
 </button>
 
-<button class="sound-btn secondary"
-data-sound="sawtooth">
-Electric
+<button class="sb" data-sound="sawtooth">
+<svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.5">
+<polyline points="1,15 9,2 9,15 18,2 18,15 26,2 26,15 29,15" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>Electric
 </button>
 
-<button class="sound-btn secondary"
-data-sound="warm">
-Warm
+<button class="sb" data-sound="warm">
+<svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.5">
+<path d="M1 9 C5 9 6 4 10 4 C14 4 14 14 18 14 C22 14 23 4 27 4 C28.5 4 29 7 29 9" stroke-linecap="round"/>
+</svg>Warm
 </button>
 
-<button class="sound-btn secondary"
-data-sound="dream">
-Dream
+<button class="sb" data-sound="dream">
+<svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.5">
+<path d="M1 9 C4 5 8 13 12 9 C16 5 20 13 24 9 C27 7 29 10 29 9" stroke-linecap="round" opacity="0.4"/>
+<path d="M1 9 C4 6 7 12 10 9 C13 6 16 12 19 9 C22 6 25 12 28 9" stroke-linecap="round"/>
+</svg>Dream
 </button>
 
-<button class="sound-btn secondary"
-data-sound="organ">
-Organ
+<button class="sb" data-sound="organ">
+<svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.5">
+<path d="M1 9 C3 9 4 4 6 4 C8 4 9 14 11 14 C13 14 14 4 16 4" stroke-linecap="round" opacity="0.38"/>
+<path d="M1 9 C4 9 5 2 8 2 C11 2 12 16 15 16 C18 16 19 2 22 2 C25 2 26 9 28 9" stroke-linecap="round"/>
+</svg>Organ
 </button>
 
-<button class="sound-btn secondary"
-data-sound="bell">
-Bell
+<button class="sb" data-sound="bell">
+<svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.5">
+<path d="M1 9 L3 2 C6 0 9 18 12 14 C15 10 17 7 19 8 C22 9 24 10 26 9.5 C28 9 29 9 29 9" stroke-linecap="round"/>
+</svg>Bell
 </button>
 
-<button class="sound-btn secondary"
-data-sound="bass">
-Bass
+<button class="sb" data-sound="bass">
+<svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.5">
+<path d="M1 9 C3 9 4 13 6 13 C8 13 9 5 11 5 C13 5 14 13 16 13 C18 13 19 5 21 5 C23 5 24 9 26 9" stroke-linecap="round"/>
+</svg>Bass
 </button>
 
-<button class="sound-btn secondary"
-data-sound="bright">
-Bright
+<button class="sb" data-sound="bright">
+<svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.5">
+<polyline points="1,14 5,2 5,14 9,2 9,14 13,2 13,14 17,2 17,14 21,2 21,14 25,2 25,14 29,14" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>Bright
 </button>
 
 </div>
 
-<div style="margin-top:30px; line-height:2; color:var(--muted);">
+<div class="hr"></div>
+<div class="sec" style="margin-bottom:12px;">Features</div>
+<div class="feats">
+    <span class="ftag">_ chord system</span>
+    <span class="ftag">FM bell synthesis</span>
+    <span class="ftag">Additive organ</span>
+    <span class="ftag">Detuned dream pad</span>
+    <span class="ftag">Warm filter</span>
+    <span class="ftag">Bass low-pass</span>
+    <span class="ftag">Bright high-shelf</span>
+    <span class="ftag">Tempo control</span>
+    <span class="ftag">Sustain & volume</span>
+    <span class="ftag">Record & save</span>
+    <span class="ftag">Loop mode</span>
+    <span class="ftag">Random melody</span>
+    <span class="ftag">Mobile ready</span>
+</div>
 
-<b style="color:white;">NEW FEATURES:</b><br><br>
-
-• Chord system using "_" <br>
-• Tempo control<br>
-• Sustain control<br>
-• Volume control<br>
-• Recording mode<br>
-• Song download<br>
-• Loop mode<br>
-• Random melody generator<br>
-• Demo songs<br>
-• Theme switcher<br>
-• Live history<br>
-• Full mobile support<br>
-
+</div>
 </div>
 
 </div>
 
-</div>
-
+<!-- ═══ PIANO ═══ -->
+<div class="card">
+<div class="sec">Piano Keyboard</div>
 <div class="piano-wrap">
-
 <div class="piano">
-
-<div class="white" data-key="q">Q</div>
-<div class="white" data-key="w">W</div>
-<div class="white" data-key="e">E</div>
-<div class="white" data-key="r">R</div>
-<div class="white" data-key="t">T</div>
-<div class="white" data-key="y">Y</div>
-<div class="white" data-key="u">U</div>
-
-<div class="white" data-key="z">Z / I</div>
-<div class="white" data-key="x">X / O</div>
-<div class="white" data-key="c">C / P</div>
-<div class="white" data-key="v">V / H</div>
-<div class="white" data-key="b">B / J</div>
-<div class="white" data-key="n">N / K</div>
-<div class="white" data-key="m">M / L</div>
-
-<div class="black b1" data-key="1">1</div>
-<div class="black b2" data-key="2">2</div>
-<div class="black b3" data-key="3">3</div>
-<div class="black b4" data-key="4">4</div>
-<div class="black b5" data-key="5">5</div>
-
-<div class="black b6" data-key="a">A / 6</div>
-<div class="black b7" data-key="s">S / 7</div>
-<div class="black b8" data-key="d">D / 8</div>
-<div class="black b9" data-key="f">F / 9</div>
-<div class="black b10" data-key="g">G / 0</div>
-
+    <div class="white" data-key="q">Q</div>
+    <div class="white" data-key="w">W</div>
+    <div class="white" data-key="e">E</div>
+    <div class="white" data-key="r">R</div>
+    <div class="white" data-key="t">T</div>
+    <div class="white" data-key="y">Y</div>
+    <div class="white" data-key="u">U</div>
+    <div class="white" data-key="z">Z/I</div>
+    <div class="white" data-key="x">X/O</div>
+    <div class="white" data-key="c">C/P</div>
+    <div class="white" data-key="v">V/H</div>
+    <div class="white" data-key="b">B/J</div>
+    <div class="white" data-key="n">N/K</div>
+    <div class="white" data-key="m">M/L</div>
+    <div class="black b1"  data-key="1">1</div>
+    <div class="black b2"  data-key="2">2</div>
+    <div class="black b3"  data-key="3">3</div>
+    <div class="black b4"  data-key="4">4</div>
+    <div class="black b5"  data-key="5">5</div>
+    <div class="black b6"  data-key="a">A/6</div>
+    <div class="black b7"  data-key="s">S/7</div>
+    <div class="black b8"  data-key="d">D/8</div>
+    <div class="black b9"  data-key="f">F/9</div>
+    <div class="black b10" data-key="g">G/0</div>
+</div>
+</div>
 </div>
 
-</div>
-
-<div class="footer">
-Built for Typists 🎹
-</div>
+<footer class="ft">TypeTone Piano Studio X · Built for Typists 🎹</footer>
 
 </div>
 
 <script>
 
-const audioContext =
-new (window.AudioContext || window.webkitAudioContext)();
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 let currentSound = "sine";
-
 let isLoop = false;
 let recording = false;
 let recordedNotes = [];
 
+/* ─────────────────────────────────────────
+   ALL NOTE DATA — UNCHANGED
+───────────────────────────────────────── */
 const notes = {
-
-q:261.63,
-"1":277.18,
-w:293.66,
-"2":311.13,
-e:329.63,
-r:349.23,
-"3":369.99,
-t:392.00,
-"4":415.30,
-y:440.00,
-"5":466.16,
-u:493.88,
-
-z:523.25,
-a:554.37,
-x:587.33,
-s:622.25,
-c:659.25,
-v:698.46,
-d:739.99,
-b:783.99,
-f:830.61,
-n:880.00,
-g:932.33,
-m:987.77,
-
-i:523.25,
-"6":554.37,
-
-o:587.33,
-"7":622.25,
-
-p:659.25,
-
-h:698.46,
-"8":739.99,
-
-j:783.99,
-"9":830.61,
-
-k:880.00,
-"0":932.33,
-
-l:987.77
+    q:261.63,"1":277.18,w:293.66,"2":311.13,e:329.63,
+    r:349.23,"3":369.99,t:392.00,"4":415.30,y:440.00,
+    "5":466.16,u:493.88,
+    z:523.25,a:554.37,x:587.33,s:622.25,c:659.25,
+    v:698.46,d:739.99,b:783.99,f:830.61,n:880.00,
+    g:932.33,m:987.77,
+    i:523.25,"6":554.37,o:587.33,"7":622.25,p:659.25,
+    h:698.46,"8":739.99,j:783.99,"9":830.61,k:880.00,
+    "0":932.33,l:987.77
 };
 
 const visualMap = {
-
-i:"z",
-o:"x",
-p:"c",
-h:"v",
-j:"b",
-k:"n",
-l:"m",
-
-"6":"a",
-"7":"s",
-"8":"d",
-"9":"f",
-"0":"g"
+    i:"z",o:"x",p:"c",h:"v",j:"b",k:"n",l:"m",
+    "6":"a","7":"s","8":"d","9":"f","0":"g"
 };
 
-function getOscType(){
+/* ─────────────────────────────────────────
+   FIXED SOUND SYNTHESIS ENGINE
+   All 10 presets now produce distinct tones
+───────────────────────────────────────── */
+function playSingle(freq, key) {
+    const ctx    = audioContext;
+    const sus    = Number(document.getElementById("sustain").value);
+    const vol    = Number(document.getElementById("volume").value);
+    const now    = ctx.currentTime;
+    const master = ctx.createGain();
+    master.connect(ctx.destination);
 
-    if(currentSound === "triangle")
-    return "triangle";
+    switch (currentSound) {
 
-    if(currentSound === "square")
-    return "square";
+    case "warm": {
+        /* Warm — filtered sine + quiet second harmonic, soft attack */
+        const f  = ctx.createBiquadFilter();
+        f.type = "lowpass"; f.frequency.value = freq * 3.5; f.Q.value = 1.2;
+        const g1 = ctx.createGain(); g1.gain.value = 0.72;
+        const g2 = ctx.createGain(); g2.gain.value = 0.28;
+        const o1 = ctx.createOscillator(); o1.type = "sine"; o1.frequency.value = freq;
+        const o2 = ctx.createOscillator(); o2.type = "sine"; o2.frequency.value = freq * 2;
+        o1.connect(g1); g1.connect(f);
+        o2.connect(g2); g2.connect(f);
+        f.connect(master);
+        const dur = sus * 1.3;
+        master.gain.setValueAtTime(0, now);
+        master.gain.linearRampToValueAtTime(vol, now + 0.01);
+        master.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        o1.start(now); o1.stop(now + dur);
+        o2.start(now); o2.stop(now + dur);
+        break;
+    }
 
-    if(currentSound === "sawtooth")
-    return "sawtooth";
+    case "dream": {
+        /* Dream — 3 detuned sines = lush pad with slow attack */
+        const f = ctx.createBiquadFilter();
+        f.type = "lowpass"; f.frequency.value = freq * 4;
+        f.connect(master);
+        const dur = Math.max(sus * 2, 1.5);
+        master.gain.setValueAtTime(0, now);
+        master.gain.linearRampToValueAtTime(vol * 0.44, now + 0.1);
+        master.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        [-12, 0, 12].forEach(dt => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain(); g.gain.value = 0.34;
+            o.type = "sine"; o.frequency.value = freq; o.detune.value = dt;
+            o.connect(g); g.connect(f);
+            o.start(now); o.stop(now + dur);
+        });
+        break;
+    }
 
-    return "sine";
-}
+    case "organ": {
+        /* Organ — additive synthesis: 5 sine harmonics */
+        master.gain.setValueAtTime(vol, now);
+        master.gain.exponentialRampToValueAtTime(0.001, now + sus);
+        const weights = [0.50, 0.28, 0.12, 0.07, 0.03];
+        [1, 2, 3, 4, 5].forEach((h, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain(); g.gain.value = weights[i];
+            o.type = "sine"; o.frequency.value = freq * h;
+            o.connect(g); g.connect(master);
+            o.start(now); o.stop(now + sus);
+        });
+        break;
+    }
 
-function playSingle(freq,key){
+    case "bell": {
+        /* Bell — FM synthesis: inharmonic modulator → metallic shimmer */
+        const carrier  = ctx.createOscillator();
+        const mod      = ctx.createOscillator();
+        const modGain  = ctx.createGain();
+        carrier.type = "sine"; carrier.frequency.value = freq;
+        mod.type     = "sine"; mod.frequency.value     = freq * 7.07;
+        modGain.gain.setValueAtTime(freq * 9, now);
+        modGain.gain.exponentialRampToValueAtTime(freq * 0.1, now + 0.35);
+        mod.connect(modGain); modGain.connect(carrier.frequency);
+        carrier.connect(master);
+        const dur = sus * 0.75;
+        master.gain.setValueAtTime(vol, now);
+        master.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        carrier.start(now); carrier.stop(now + dur);
+        mod.start(now);     mod.stop(now + dur);
+        break;
+    }
 
-    const osc =
-    audioContext.createOscillator();
+    case "bass": {
+        /* Bass — octave-down sawtooth + tight low-pass filter */
+        const f = ctx.createBiquadFilter();
+        f.type = "lowpass"; f.frequency.value = 680; f.Q.value = 4.5;
+        const o = ctx.createOscillator();
+        o.type = "sawtooth"; o.frequency.value = freq * 0.5;
+        o.connect(f); f.connect(master);
+        master.gain.setValueAtTime(vol * 1.25, now);
+        master.gain.exponentialRampToValueAtTime(0.001, now + sus * 0.9);
+        o.start(now); o.stop(now + sus);
+        break;
+    }
 
-    const gain =
-    audioContext.createGain();
+    case "bright": {
+        /* Bright — sawtooth + high-shelf boost */
+        const shelf = ctx.createBiquadFilter();
+        shelf.type = "highshelf"; shelf.frequency.value = 2400; shelf.gain.value = 9;
+        const o = ctx.createOscillator();
+        o.type = "sawtooth"; o.frequency.value = freq;
+        o.connect(shelf); shelf.connect(master);
+        master.gain.setValueAtTime(vol * 0.65, now);
+        master.gain.exponentialRampToValueAtTime(0.001, now + sus * 0.55);
+        o.start(now); o.stop(now + sus);
+        break;
+    }
 
-    osc.type = getOscType();
-
-    osc.frequency.value = freq;
-
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-
-    const sustain =
-    Number(document.getElementById("sustain").value);
-
-    const volume =
-    Number(document.getElementById("volume").value);
-
-    gain.gain.setValueAtTime(
-        volume,
-        audioContext.currentTime
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        0.001,
-        audioContext.currentTime + sustain
-    );
-
-    osc.start();
-    osc.stop(audioContext.currentTime + sustain);
+    default: {
+        /* Classic (sine) / Soft (triangle) / Retro (square) / Electric (sawtooth) */
+        const type = currentSound === "triangle" ? "triangle"
+                   : currentSound === "square"   ? "square"
+                   : currentSound === "sawtooth" ? "sawtooth"
+                   : "sine";
+        const o = ctx.createOscillator();
+        o.type = type; o.frequency.value = freq;
+        o.connect(master);
+        master.gain.setValueAtTime(vol, now);
+        master.gain.exponentialRampToValueAtTime(0.001, now + sus);
+        o.start(now); o.stop(now + sus);
+        break;
+    }
+    }
 
     animateKey(key);
-
     updateHistory(key);
 }
 
-function playChord(keys){
-
-    keys.forEach(k=>{
-
-        if(notes[k]){
-            playSingle(notes[k],k);
-        }
-
-    });
+/* ─────────────────────────────────────────
+   CORE LOGIC — UNCHANGED
+───────────────────────────────────────── */
+function playChord(keys) {
+    keys.forEach(k => { if (notes[k]) playSingle(notes[k], k); });
 }
 
-function triggerKey(key){
-
-    if(key.includes("_")){
-
-        const split =
-        key.split("_");
-
-        playChord(split);
-
-    }
-
-    else{
-
-        if(notes[key]){
-            playSingle(notes[key],key);
-        }
-    }
-
-    if(recording){
-        recordedNotes.push(key);
-    }
+function triggerKey(key) {
+    if (key.includes("_")) playChord(key.split("_"));
+    else if (notes[key]) playSingle(notes[key], key);
+    if (recording) recordedNotes.push(key);
 }
 
-function animateKey(key){
-
-    let visual =
-    visualMap[key] || key;
-
-    const el =
-    document.querySelector(`[data-key="${visual}"]`);
-
-    if(el){
-
-        el.classList.add("active");
-
-        setTimeout(()=>{
-
-            el.classList.remove("active");
-
-        },120);
-    }
+function animateKey(key) {
+    const visual = visualMap[key] || key;
+    const el = document.querySelector(`[data-key="${visual}"]`);
+    if (el) { el.classList.add("active"); setTimeout(() => el.classList.remove("active"), 120); }
 }
 
-function updateHistory(key){
-
-    const history =
-    document.getElementById("history");
-
-    history.innerHTML +=
-    " " + key;
-
-    history.scrollTop =
-    history.scrollHeight;
+function updateHistory(key) {
+    const h = document.getElementById("history");
+    h.innerHTML += " " + key;
+    h.scrollTop = h.scrollHeight;
 }
 
-document.addEventListener("keydown",(e)=>{
+document.addEventListener("keydown", e => { if (!e.repeat) triggerKey(e.key.toLowerCase()); });
 
-    if(e.repeat) return;
-
-    const key =
-    e.key.toLowerCase();
-
-    triggerKey(key);
+document.querySelectorAll(".white,.black").forEach(el => {
+    el.addEventListener("mousedown", () => triggerKey(el.dataset.key));
 });
 
-document.querySelectorAll(".white,.black")
-.forEach(el=>{
-
-    el.addEventListener("mousedown",()=>{
-
-        triggerKey(el.dataset.key);
-
-    });
-
-});
-
-document.querySelectorAll(".sound-btn")
-.forEach(btn=>{
-
-    btn.addEventListener("click",()=>{
-
-        document.querySelectorAll(".sound-btn")
-        .forEach(b=>b.classList.remove("active"));
-
+document.querySelectorAll(".sb").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".sb").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-
-        currentSound =
-        btn.dataset.sound;
-
+        currentSound = btn.dataset.sound;
     });
-
 });
 
-let songTokens = [];
-let index = 0;
-let playing = false;
-let paused = false;
-let timeout;
+/* Song player */
+let songTokens = [], index = 0, playing = false, paused = false, timeout;
 
-function playSong(){
-
+function playSong() {
     stopSong();
-
-    const raw =
-    document.getElementById("songInput")
-    .value
-    .trim();
-
-    if(!raw){
-        return;
-    }
-
-    songTokens =
-    raw.split(/\s+/);
-
-    index = 0;
-
-    playing = true;
-    paused = false;
-
-    document.getElementById("status")
-    .innerText =
-    "Playing...";
-
+    const raw = document.getElementById("songInput").value.trim();
+    if (!raw) return;
+    songTokens = raw.split(/\s+/);
+    index = 0; playing = true; paused = false;
+    document.getElementById("status").innerText = "Playing...";
     nextToken();
 }
 
-function nextToken(){
-
-    if(!playing || paused)
-    return;
-
-    if(index >= songTokens.length){
-
-        if(isLoop){
-
-            index = 0;
-        }
-
-        else{
-
-            playing = false;
-
-            document.getElementById("status")
-            .innerText =
-            "Finished.";
-
-            return;
-        }
+function nextToken() {
+    if (!playing || paused) return;
+    if (index >= songTokens.length) {
+        if (isLoop) { index = 0; }
+        else { playing = false; document.getElementById("status").innerText = "Finished."; return; }
     }
-
-    const token =
-    songTokens[index];
-
-    triggerKey(token);
-
-    index++;
-
-    const tempo =
-    Number(document.getElementById("tempo").value);
-
-    timeout =
-    setTimeout(nextToken,tempo);
+    triggerKey(songTokens[index++]);
+    timeout = setTimeout(nextToken, Number(document.getElementById("tempo").value));
 }
 
-function pauseSong(){
+function pauseSong()  { paused = true; document.getElementById("status").innerText = "Paused."; }
+function resumeSong() { paused = false; document.getElementById("status").innerText = "Playing..."; nextToken(); }
+function stopSong()   { playing = false; paused = false; clearTimeout(timeout); document.getElementById("status").innerText = "Stopped."; }
 
-    paused = true;
-
-    document.getElementById("status")
-    .innerText =
-    "Paused.";
-}
-
-function resumeSong(){
-
-    paused = false;
-
-    document.getElementById("status")
-    .innerText =
-    "Playing...";
-
-    nextToken();
-}
-
-function stopSong(){
-
-    playing = false;
-    paused = false;
-
-    clearTimeout(timeout);
-
-    document.getElementById("status")
-    .innerText =
-    "Stopped.";
-}
-
-function toggleLoop(){
-
+function toggleLoop() {
     isLoop = !isLoop;
-
-    document.getElementById("status")
-    .innerText =
-    "Loop: " + isLoop;
+    document.getElementById("loopBtn").classList.toggle("on", isLoop);
+    document.getElementById("status").innerText = "Loop: " + (isLoop ? "ON" : "OFF");
 }
 
-function randomMelody(){
-
-    const keys =
-    Object.keys(notes);
-
+function randomMelody() {
+    const keys = Object.keys(notes);
     let out = "";
-
-    for(let i=0;i<40;i++){
-
-        out +=
-        keys[
-            Math.floor(Math.random()*keys.length)
-        ] + " ";
-    }
-
-    document.getElementById("songInput")
-    .value = out;
+    for (let i = 0; i < 40; i++) out += keys[Math.floor(Math.random() * keys.length)] + " ";
+    document.getElementById("songInput").value = out;
 }
 
-function recordToggle(){
-
+function recordToggle() {
     recording = !recording;
-
-    if(recording){
-
+    const btn = document.getElementById("recordBtn");
+    if (recording) {
         recordedNotes = [];
-
-        document.getElementById("status")
-        .innerText =
-        "Recording...";
-    }
-
-    else{
-
-        document.getElementById("songInput")
-        .value =
-        recordedNotes.join(" ");
-
-        document.getElementById("status")
-        .innerText =
-        "Recording saved.";
+        btn.innerHTML = '<span class="rp"></span>Stop Rec';
+        btn.classList.add("rec-on");
+        document.getElementById("status").innerText = "Recording...";
+    } else {
+        btn.innerHTML = "⏺ Record";
+        btn.classList.remove("rec-on");
+        document.getElementById("songInput").value = recordedNotes.join(" ");
+        document.getElementById("status").innerText = "Recording saved.";
     }
 }
 
-function downloadRecording(){
-
-    const blob =
-    new Blob(
-        [
-            document.getElementById("songInput").value
-        ],
-        {
-            type:"text/plain"
-        }
-    );
-
-    const a =
-    document.createElement("a");
-
-    a.href =
-    URL.createObjectURL(blob);
-
-    a.download =
-    "typetone_song.txt";
-
-    a.click();
+function downloadRecording() {
+    const blob = new Blob([document.getElementById("songInput").value], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "typetone_song.txt"; a.click();
 }
 
-function loadDemoSong(){
-
-document.getElementById("songInput")
-.value =
-"q q w q t y q q w q u t q q q p t y w e";
-
+function loadDemoSong() {
+    document.getElementById("songInput").value = "q q w q t y q q w q u t q q q p t y w e";
 }
 
-function toggleTheme(){
-
-    if(document.body.style.background === "white"){
-
-        location.reload();
-    }
-
-    else{
-
-        document.body.style.background = "white";
-        document.body.style.color = "black";
-    }
+function toggleTheme() {
+    document.body.classList.toggle("light");
 }
 
 </script>
-
 </body>
 </html>
