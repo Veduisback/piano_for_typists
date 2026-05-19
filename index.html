@@ -3,581 +3,1360 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>TypeTone - Piano For Typists</title>
-
+<title>TypeTone - The Piano Built For Typists</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    font-family:'Poppins',sans-serif;
-    background:#0f1117;
-    color:white;
-    overflow-x:hidden;
-}
-
-/* NAVBAR */
-
-nav{
-    width:100%;
-    padding:20px 8%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    position:fixed;
-    top:0;
-    z-index:1000;
-    backdrop-filter:blur(10px);
-    background:rgba(15,17,23,0.75);
-}
-
-.logo{
-    font-size:28px;
-    font-weight:700;
-    color:#ffffff;
-}
-
-.logo span{
-    color:#6ea8ff;
-}
-
-.nav-buttons{
-    display:flex;
-    gap:15px;
-}
-
-.nav-btn{
-    padding:12px 24px;
-    border:none;
-    border-radius:12px;
-    font-size:15px;
-    cursor:pointer;
-    transition:0.25s;
-    font-weight:500;
-}
-
-.signin{
-    background:transparent;
-    border:1px solid #6ea8ff;
-    color:#6ea8ff;
-}
-
-.signup{
-    background:#6ea8ff;
-    color:#111;
-}
-
-.nav-btn:hover{
-    transform:translateY(-2px);
-}
-
-/* HERO */
-
-.hero{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:120px 8% 60px;
-}
-
-.hero-container{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:70px;
-    align-items:center;
-}
-
-.hero-text h1{
-    font-size:70px;
-    line-height:1.05;
-    margin-bottom:25px;
-}
-
-.hero-text h1 span{
-    color:#6ea8ff;
-}
-
-.hero-text p{
-    color:#b5b5b5;
-    line-height:1.8;
-    font-size:18px;
-    margin-bottom:35px;
-}
-
-.hero-buttons{
-    display:flex;
-    gap:20px;
-    flex-wrap:wrap;
-}
-
-.hero-btn{
-    padding:16px 28px;
-    border:none;
-    border-radius:14px;
-    cursor:pointer;
-    font-size:16px;
-    transition:0.25s;
-    font-weight:600;
-}
-
-.primary{
-    background:#6ea8ff;
-    color:#111;
-}
-
-.secondary{
-    background:#1d2230;
-    color:white;
-    border:1px solid #333;
-}
-
-.hero-btn:hover{
-    transform:translateY(-3px);
-}
-
-/* PIANO VISUAL */
-
-.visual{
-    display:flex;
-    justify-content:center;
-}
-
-.piano-box{
-    background:#171b26;
-    padding:35px;
-    border-radius:28px;
-    box-shadow:0 0 40px rgba(0,0,0,0.45);
-}
-
-.keys{
-    display:flex;
-    position:relative;
-}
-
-.white{
-    width:65px;
-    height:250px;
-    background:white;
-    border:2px solid #111;
-    border-radius:0 0 10px 10px;
-}
-
-.black{
-    width:40px;
-    height:150px;
-    background:black;
-    position:absolute;
-    border-radius:0 0 8px 8px;
-}
-
-/* black positions */
-.b1{ left:45px; }
-.b2{ left:110px; }
-.b3{ left:240px; }
-.b4{ left:305px; }
-.b5{ left:370px; }
-
-/* FEATURES */
-
-.features{
-    padding:80px 8%;
-}
-
-.section-title{
-    text-align:center;
-    font-size:48px;
-    margin-bottom:60px;
-}
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:30px;
-}
-
-.card{
-    background:#171b26;
-    padding:35px;
-    border-radius:24px;
-    transition:0.3s;
-    border:1px solid #23283a;
-}
-
-.card:hover{
-    transform:translateY(-6px);
-}
-
-.card h3{
-    margin:20px 0;
-    font-size:24px;
-}
-
-.card p{
-    color:#b8b8b8;
-    line-height:1.7;
-}
-
-/* AUTH MODAL */
-
-.modal{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.75);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:2000;
-}
-
-.modal-content{
-    width:400px;
-    background:#171b26;
-    padding:40px;
-    border-radius:24px;
-    text-align:center;
-}
-
-.modal-content h2{
-    margin-bottom:10px;
-}
-
-.modal-content p{
-    color:#aaa;
-    margin-bottom:30px;
-}
-
-.google-btn{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:14px;
-    background:white;
-    color:#111;
-    font-size:16px;
-    cursor:pointer;
-    font-weight:600;
-    transition:0.25s;
-}
-
-.google-btn:hover{
-    transform:translateY(-2px);
-}
-
-.close-btn{
-    margin-top:20px;
-    color:#888;
-    cursor:pointer;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:1000px){
-
-    .hero-container{
-        grid-template-columns:1fr;
-        text-align:center;
+    :root {
+        --bg-color: #030304;
+        --text-main: #ffffff;
+        --text-muted: #94a3b8;
+        --text-dark: #cbd5e1;
+        --accent: #60a5fa;
+        --neon-blue: rgba(59, 130, 246, 0.8);
+        --neon-purple: rgba(139, 92, 246, 0.8);
+        --card-bg: rgba(255, 255, 255, 0.02);
+        --card-border: rgba(255, 255, 255, 0.05);
+        --card-border-hover: rgba(255, 255, 255, 0.15);
     }
 
-    .hero-text h1{
-        font-size:52px;
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
-    .hero-buttons{
-        justify-content:center;
-    }
-}
-
-@media(max-width:650px){
-
-    .hero-text h1{
-        font-size:40px;
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
 
-    .white{
-        width:42px;
-        height:180px;
+    /* Loader */
+    #loader {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-color);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.6s;
+    }
+    .spinner {
+        width: 48px;
+        height: 48px;
+        border: 3px solid rgba(255,255,255,0.05);
+        border-top-color: var(--accent);
+        border-right-color: rgba(139, 92, 246, 0.8);
+        border-radius: 50%;
+        animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* Background Gradients & Motion */
+    #canvas-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        pointer-events: none;
+    }
+    .bg-gradients {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+    }
+    .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.4;
+        animation: drift 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .orb-1 {
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, #1e3a8a 0%, transparent 70%);
+        top: -200px;
+        left: 20%;
+    }
+    .orb-2 {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, #581c87 0%, transparent 70%);
+        top: 30%;
+        right: -100px;
+        animation-delay: -5s;
+    }
+    .orb-3 {
+        width: 800px;
+        height: 400px;
+        background: radial-gradient(circle, #0f172a 0%, transparent 70%);
+        bottom: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation-delay: -10s;
     }
 
-    .black{
-        width:28px;
-        height:110px;
+    @keyframes drift {
+        0% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, 40px) scale(1.1); }
+        100% { transform: translate(-20px, 20px) scale(0.9); }
     }
 
-    .b1{ left:29px; }
-    .b2{ left:71px; }
-    .b3{ left:155px; }
-    .b4{ left:197px; }
-    .b5{ left:239px; }
-}
+    /* Ambient Sound Waves */
+    .sound-wave {
+        position: fixed;
+        top: 50%; left: 50%;
+        width: 20px; height: 20px;
+        border: 2px solid rgba(96, 165, 250, 0.5);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        animation: ripple 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        z-index: 0;
+    }
+    @keyframes ripple {
+        to { transform: translate(-50%, -50%) scale(40); opacity: 0; border-width: 0; }
+    }
 
+    /* Navbar */
+    nav {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        padding: 20px 8%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+        background: transparent;
+        transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    nav.scrolled {
+        background: rgba(3, 3, 4, 0.75);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 16px 8%;
+    }
+    .logo {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        z-index: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .logo-icon {
+        width: 24px;
+        height: 24px;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        border-radius: 6px;
+        box-shadow: 0 0 15px rgba(96, 165, 250, 0.5);
+    }
+    .logo span {
+        background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .nav-buttons {
+        display: flex;
+        gap: 16px;
+        z-index: 1;
+        align-items: center;
+    }
+    .btn {
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        letter-spacing: 0.3px;
+    }
+    .btn-ghost {
+        background: transparent;
+        color: var(--text-muted);
+    }
+    .btn-ghost:hover {
+        color: #fff;
+        background: rgba(255,255,255,0.06);
+    }
+    .btn-primary {
+        background: #fff;
+        color: #000;
+        box-shadow: 0 4px 14px 0 rgba(255, 255, 255, 0.15);
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    /* Main Container */
+    main {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Hero Section */
+    .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: center;
+        padding: 180px 20px 40px;
+    }
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 16px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--text-dark);
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 32px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .badge-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent);
+    }
+    .hero h1 {
+        font-size: clamp(48px, 7vw, 92px);
+        font-weight: 800;
+        line-height: 1.05;
+        letter-spacing: -3px;
+        margin-bottom: 24px;
+        max-width: 900px;
+        position: relative;
+    }
+    .text-gradient {
+        background: linear-gradient(180deg, #FFFFFF 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+        font-size: clamp(16px, 2vw, 22px);
+        color: var(--text-muted);
+        max-width: 650px;
+        line-height: 1.6;
+        margin-bottom: 48px;
+        font-weight: 400;
+        letter-spacing: -0.2px;
+    }
+    .hero-buttons {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 60px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .btn-large {
+        padding: 16px 36px;
+        font-size: 16px;
+        border-radius: 14px;
+    }
+    .btn-accent {
+        background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+        color: #020617;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), inset 0 -3px 0 rgba(0,0,0,0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-accent::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%; width: 50%; height: 100%;
+        background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+        transform: skewX(-20deg);
+        transition: 0.5s;
+    }
+    .btn-accent:hover::before {
+        left: 200%;
+    }
+    .btn-accent:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3), inset 0 -3px 0 rgba(0,0,0,0.1);
+    }
+    .btn-outline {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #fff;
+        backdrop-filter: blur(10px);
+    }
+    .btn-outline:hover {
+        background: rgba(255,255,255,0.06);
+        border-color: rgba(255,255,255,0.2);
+        transform: translateY(-2px);
+    }
+
+    /* Animated Piano Visual with Depth */
+    .piano-wrapper {
+        position: relative;
+        perspective: 1200px;
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 20px;
+        z-index: 2;
+    }
+    
+    @keyframes float {
+        0% { transform: rotateX(25deg) translateY(0px); }
+        50% { transform: rotateX(22deg) translateY(-20px); }
+        100% { transform: rotateX(25deg) translateY(0px); }
+    }
+    
+    .piano-container {
+        background: linear-gradient(180deg, #18181b 0%, #09090b 100%);
+        border: 1px solid rgba(255,255,255,0.06);
+        padding: 24px;
+        border-radius: 20px;
+        box-shadow: 
+            0 50px 100px -20px rgba(0,0,0,1), 
+            0 30px 60px -30px rgba(59, 130, 246, 0.3),
+            inset 0 1px 0 rgba(255,255,255,0.1);
+        backdrop-filter: blur(20px);
+        transform-style: preserve-3d;
+        animation: float 6s ease-in-out infinite;
+        display: flex;
+        justify-content: center;
+        transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .keys-container {
+        display: flex;
+        position: relative;
+        background: #000;
+        padding: 4px;
+        border-radius: 8px;
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.8);
+    }
+    .key {
+        border-radius: 0 0 6px 6px;
+        cursor: pointer;
+        transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: top;
+        position: relative;
+    }
+    .key-label {
+        position: absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 11px;
+        font-weight: 600;
+        color: #94a3b8;
+        pointer-events: none;
+        opacity: 0.6;
+        transition: opacity 0.2s;
+    }
+    .key-black .key-label {
+        color: #475569;
+        bottom: 10px;
+    }
+    .key:hover .key-label {
+        opacity: 1;
+    }
+    .key-white {
+        width: 52px;
+        height: 220px;
+        background: linear-gradient(to bottom, #ffffff 0%, #e2e8f0 100%);
+        border-left: 1px solid rgba(0,0,0,0.1);
+        border-right: 1px solid rgba(0,0,0,0.2);
+        border-bottom: 2px solid #ccc;
+        margin: 0 1px;
+        position: relative;
+        z-index: 1;
+        box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.4);
+    }
+    .key-black {
+        width: 32px;
+        height: 130px;
+        background: linear-gradient(to bottom, #27272a 0%, #000000 100%);
+        border: 1px solid #000;
+        position: absolute;
+        z-index: 2;
+        border-radius: 0 0 6px 6px;
+        box-shadow: inset 0 -2px 3px rgba(255,255,255,0.1), inset 1px 0 2px rgba(255,255,255,0.1), 0 6px 10px rgba(0,0,0,0.6);
+    }
+    
+    .key-white.active {
+        background: #f8fafc;
+        transform: scaleY(0.97) translateZ(-5px);
+        box-shadow: inset 0 -1px 2px rgba(0,0,0,0.2), 0 0 25px 5px var(--neon-blue);
+        border-bottom: 2px solid #60a5fa;
+        z-index: 3;
+    }
+    .key-black.active {
+        background: #111;
+        transform: scaleY(0.96) translateZ(-5px);
+        box-shadow: inset 0 -1px 2px rgba(255,255,255,0.1), 0 0 25px 5px var(--neon-purple);
+        z-index: 4;
+    }
+
+    .k-b1 { left: 40px; }
+    .k-b2 { left: 94px; }
+    .k-b3 { left: 202px; }
+    .k-b4 { left: 256px; }
+    .k-b5 { left: 310px; }
+    .k-b6 { left: 418px; }
+    .k-b7 { left: 472px; }
+
+    .demo-hint {
+        margin-top: 50px;
+        font-size: 14px;
+        color: var(--accent);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background: rgba(96, 165, 250, 0.1);
+        padding: 12px 24px;
+        border-radius: 100px;
+        border: 1px solid rgba(96, 165, 250, 0.2);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        animation: pulseText 2s infinite alternate;
+        backdrop-filter: blur(10px);
+    }
+    @keyframes pulseText {
+        0% { opacity: 0.7; transform: scale(1); }
+        100% { opacity: 1; transform: scale(1.02); }
+    }
+
+    /* How It Works Section */
+    .how-it-works {
+        padding: 120px 8%;
+        max-width: 1280px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+    }
+    .how-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 32px;
+        padding: 60px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .how-text h3 {
+        font-size: 36px;
+        margin-bottom: 24px;
+        font-weight: 800;
+        letter-spacing: -1.5px;
+    }
+    .how-text p {
+        color: var(--text-muted);
+        font-size: 18px;
+        line-height: 1.7;
+        margin-bottom: 48px;
+    }
+    .stats-row {
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap;
+    }
+    .stat {
+        display: flex;
+        flex-direction: column;
+    }
+    .stat-val {
+        font-size: 48px;
+        font-weight: 800;
+        color: var(--text-main);
+        letter-spacing: -2px;
+        display: flex;
+        align-items: baseline;
+    }
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 8px;
+    }
+    .kb-visual {
+        background: linear-gradient(145deg, #111827 0%, #030712 100%);
+        border-radius: 24px;
+        padding: 40px;
+        border: 1px solid rgba(255,255,255,0.05);
+        box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .kb-row {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .kb-row:nth-child(2) {
+        margin-left: 24px;
+    }
+    .kb-key {
+        width: 54px;
+        height: 54px;
+        background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+        border: 1px solid #374151;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 15px;
+        color: #9ca3af;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), inset 0 2px 0 rgba(255,255,255,0.1);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+    .kb-key.active {
+        background: var(--accent);
+        color: #fff;
+        transform: translateY(4px);
+        box-shadow: 0 0 20px var(--accent), inset 0 -2px 5px rgba(0,0,0,0.3);
+        border-color: var(--accent);
+    }
+
+    /* Features Section */
+    .features {
+        padding: 80px 8% 120px;
+        position: relative;
+        max-width: 1280px;
+        margin: 0 auto;
+        z-index: 2;
+    }
+    .section-header {
+        text-align: center;
+        margin-bottom: 80px;
+    }
+    .section-header h2 {
+        font-size: clamp(32px, 5vw, 48px);
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        margin-bottom: 20px;
+    }
+    .section-header p {
+        color: var(--text-muted);
+        font-size: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 32px;
+    }
+    .feature-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 24px;
+        padding: 48px 36px;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.08), transparent 40%);
+        opacity: 0;
+        transition: opacity 0.5s;
+        pointer-events: none;
+        z-index: 1;
+    }
+    .feature-card:hover::before {
+        opacity: 1;
+    }
+    .feature-card:hover {
+        transform: translateY(-8px);
+        border-color: var(--card-border-hover);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 20px rgba(96, 165, 250, 0.1);
+    }
+    .feature-card > * {
+        position: relative;
+        z-index: 2;
+    }
+    .icon-box {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 32px;
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 16px rgba(0,0,0,0.2);
+        color: var(--accent);
+    }
+    .feature-card h3 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: #f8fafc;
+        letter-spacing: -0.5px;
+    }
+    .feature-card p {
+        color: var(--text-muted);
+        line-height: 1.7;
+        font-size: 16px;
+    }
+
+    /* Footer */
+    footer {
+        padding: 60px 8% 40px;
+        text-align: center;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        color: var(--text-muted);
+        font-size: 14px;
+        background: transparent;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Auth Modal */
+    .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .modal.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+    .modal-content {
+        background: #09090b;
+        width: 100%;
+        max-width: 440px;
+        padding: 48px;
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.08);
+        text-align: center;
+        transform: scale(0.95) translateY(20px);
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 1), inset 0 1px 0 rgba(255,255,255,0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    .modal-content::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 4px;
+        background: linear-gradient(90deg, #60a5fa, #a78bfa);
+    }
+    .modal.active .modal-content {
+        transform: scale(1) translateY(0);
+    }
+    .modal-icon {
+        width: 64px;
+        height: 64px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin: 0 auto 32px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .modal-content h2 {
+        font-size: 28px;
+        margin-bottom: 16px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    .modal-content p {
+        color: var(--text-muted);
+        font-size: 15px;
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+    .google-btn {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        background: #fff;
+        color: #000;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        box-shadow: 0 4px 14px rgba(255,255,255,0.1);
+    }
+    .google-btn:hover {
+        background: #f8fafc;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(255,255,255,0.2);
+    }
+    .google-btn img {
+        width: 20px;
+    }
+    .close-btn {
+        margin-top: 24px;
+        color: var(--text-muted);
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: color 0.2s;
+        background: none;
+        border: none;
+        font-family: inherit;
+        padding: 8px 16px;
+    }
+    .close-btn:hover {
+        color: white;
+    }
+
+    /* Scroll Reveal Classes */
+    .reveal {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+        transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .reveal.active {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+
+    /* Responsive Design improvements */
+    @media (max-width: 1024px) {
+        .piano-wrapper {
+            transform: scale(0.8);
+            transform-origin: top center;
+            margin-bottom: -100px; 
+        }
+        .how-container {
+            grid-template-columns: 1fr;
+            text-align: center;
+            padding: 40px;
+        }
+        .stats-row {
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .hero {
+            padding-top: 140px;
+        }
+        .hero h1 { 
+            font-size: clamp(40px, 10vw, 56px); 
+            letter-spacing: -1.5px;
+        }
+        .hero p { 
+            font-size: 16px; 
+            padding: 0 10px;
+        }
+        nav { 
+            padding: 16px 5%; 
+        }
+        .logo span {
+            display: none; 
+        }
+        .logo::after {
+            content: 'TypeTone';
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .piano-wrapper {
+            transform: scale(0.55);
+            transform-origin: top center;
+            margin-bottom: -160px; 
+        }
+        .demo-hint {
+            margin-top: 20px;
+        }
+        .how-it-works {
+            padding-top: 200px; 
+        }
+        .grid {
+            grid-template-columns: 1fr;
+        }
+        .kb-key {
+            width: 36px;
+            height: 36px;
+            font-size: 12px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .piano-wrapper {
+            transform: scale(0.45);
+            margin-bottom: -220px;
+        }
+        .hero-buttons {
+            flex-direction: column;
+            width: 100%;
+            padding: 0 20px;
+        }
+        .btn-large {
+            width: 100%;
+        }
+        .stats-row {
+            flex-direction: column;
+            gap: 20px;
+        }
+        .how-it-works {
+            padding-top: 260px; 
+        }
+    }
 </style>
 </head>
-
 <body>
 
-<!-- NAVBAR -->
-
-<nav>
-
-    <div class="logo">
-        Type<span>Tone</span>
+    <!-- Loading Overlay -->
+    <div id="loader">
+        <div class="spinner"></div>
     </div>
 
-    <div class="nav-buttons">
-
-        <button class="nav-btn signin" onclick="openModal()">
-            Sign In
-        </button>
-
-        <button class="nav-btn signup" onclick="openModal()">
-            Sign Up
-        </button>
-
+    <!-- Background Elements -->
+    <div class="bg-gradients">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div id="canvas-container">
+        <canvas id="particles-canvas"></canvas>
     </div>
 
-</nav>
+    <!-- Navbar -->
+    <nav id="navbar">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span>TypeTone</span>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-ghost nav-btn signin" onclick="openModal()">Sign In</button>
+            <button class="btn btn-primary nav-btn signup" onclick="openModal()">Sign Up</button>
+        </div>
+    </nav>
 
-<!-- HERO -->
-
-<section class="hero">
-
-    <div class="hero-container">
-
-        <div class="hero-text">
-
-            <h1>
-                The Piano Built <br>
-                For <span>Fast Typists</span>
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="badge reveal">
+                <div class="badge-dot"></div>
+                New: Ergonomic Engine 2.0
+            </div>
+            <h1 class="reveal delay-1">
+                <span class="text-gradient">The Piano Built For</span>
+                <br/>Typists
             </h1>
-
-            <p>
-                Play piano directly from your laptop keyboard with
-                optimized ergonomic keybindings designed for speed,
-                comfort and musical flow.
-                No MIDI keyboard required.
+            <p class="reveal delay-2">
+                Play piano naturally using your laptop keyboard with optimized ergonomic keybindings. 
+                Experience fluid, low-latency musical expression without a MIDI controller.
             </p>
-
-            <div class="hero-buttons">
-
-                <button class="hero-btn primary" onclick="openModal()">
-                    Start Playing
+            <div class="hero-buttons reveal delay-3">
+                <button class="btn btn-large btn-accent hero-btn primary" onclick="openModal()">
+                    Start Playing Free
                 </button>
-
-                <button class="hero-btn secondary">
+                <button class="btn btn-large btn-outline hero-btn secondary">
                     Watch Demo
                 </button>
-
             </div>
 
-        </div>
-
-        <!-- Piano Visual -->
-
-        <div class="visual">
-
-            <div class="piano-box">
-
-                <div class="keys">
-
-                    <div class="white"></div>
-                    <div class="white"></div>
-                    <div class="white"></div>
-                    <div class="white"></div>
-                    <div class="white"></div>
-                    <div class="white"></div>
-                    <div class="white"></div>
-
-                    <div class="black b1"></div>
-                    <div class="black b2"></div>
-                    <div class="black b3"></div>
-                    <div class="black b4"></div>
-                    <div class="black b5"></div>
-
+            <!-- Piano Visual -->
+            <div class="piano-wrapper reveal delay-3">
+                <div class="piano-container" id="piano-3d">
+                    <div class="keys-container" id="piano-keys">
+                        <!-- Whites -->
+                        <div class="key key-white" data-note="1"><span class="key-label">A</span></div>
+                        <div class="key key-white" data-note="2"><span class="key-label">S</span></div>
+                        <div class="key key-white" data-note="3"><span class="key-label">D</span></div>
+                        <div class="key key-white" data-note="4"><span class="key-label">F</span></div>
+                        <div class="key key-white" data-note="5"><span class="key-label">G</span></div>
+                        <div class="key key-white" data-note="6"><span class="key-label">H</span></div>
+                        <div class="key key-white" data-note="7"><span class="key-label">J</span></div>
+                        <div class="key key-white" data-note="8"><span class="key-label">K</span></div>
+                        <div class="key key-white" data-note="9"><span class="key-label">L</span></div>
+                        <div class="key key-white" data-note="10"><span class="key-label">;</span></div>
+                        <div class="key key-white" data-note="11"><span class="key-label">'</span></div>
+                        
+                        <!-- Blacks -->
+                        <div class="key key-black k-b1" data-note="12"><span class="key-label">W</span></div>
+                        <div class="key key-black k-b2" data-note="13"><span class="key-label">E</span></div>
+                        <div class="key key-black k-b3" data-note="14"><span class="key-label">T</span></div>
+                        <div class="key key-black k-b4" data-note="15"><span class="key-label">Y</span></div>
+                        <div class="key key-black k-b5" data-note="16"><span class="key-label">U</span></div>
+                        <div class="key key-black k-b6" data-note="17"><span class="key-label">O</span></div>
+                        <div class="key key-black k-b7" data-note="18"><span class="key-label">P</span></div>
+                    </div>
                 </div>
-
+                <div class="demo-hint reveal delay-3">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/><path d="M6 9h.01"/><path d="M10 9h.01"/><path d="M14 9h.01"/><path d="M18 9h.01"/><path d="M8 13h8"/><path d="M10 17h4"/></svg>
+                    Press keys on your keyboard to try it live
+                </div>
             </div>
+        </section>
 
+        <!-- How it Works Section -->
+        <section class="how-it-works">
+            <div class="how-container reveal delay-1">
+                <div class="how-text">
+                    <h3 class="text-gradient">Designed for the Home Row</h3>
+                    <p>Unlike traditional MIDI software that simply maps notes left-to-right, TypeTone maps chords and scales to natural ergonomic typing positions. Your hands stay anchored, letting you access multiple octaves instantly without lifting your wrists.</p>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <div class="stat-val"><span class="stat-num" data-val="12">0</span>ms</div>
+                            <span class="stat-label">Audio Latency</span>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-val"><span class="stat-num" data-val="88">0</span>+</div>
+                            <span class="stat-label">Playable Notes</span>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-val"><span class="stat-num" data-val="100">0</span>%</div>
+                            <span class="stat-label">Typist Optimized</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="how-visual">
+                    <div class="kb-visual">
+                        <div class="kb-row">
+                            <div class="kb-key" data-key="w">W</div>
+                            <div class="kb-key" data-key="e">E</div>
+                            <div class="kb-key" data-key="t">T</div>
+                            <div class="kb-key" data-key="y">Y</div>
+                            <div class="kb-key" data-key="u">U</div>
+                            <div class="kb-key" data-key="o">O</div>
+                            <div class="kb-key" data-key="p">P</div>
+                        </div>
+                        <div class="kb-row">
+                            <div class="kb-key" data-key="a">A</div>
+                            <div class="kb-key" data-key="s">S</div>
+                            <div class="kb-key" data-key="d">D</div>
+                            <div class="kb-key" data-key="f">F</div>
+                            <div class="kb-key" data-key="g">G</div>
+                            <div class="kb-key" data-key="h">H</div>
+                            <div class="kb-key" data-key="j">J</div>
+                            <div class="kb-key" data-key="k">K</div>
+                            <div class="kb-key" data-key="l">L</div>
+                            <div class="kb-key" data-key=";">;</div>
+                            <div class="kb-key" data-key="'">'</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="section-header reveal">
+                <h2 class="text-gradient">Engineered for Flow</h2>
+                <p>Everything you need to turn keystrokes into masterpieces with zero compromise on quality.</p>
+            </div>
+            
+            <div class="grid">
+                <div class="feature-card reveal delay-1">
+                    <div class="icon-box">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <h3>Ergonomic Layout</h3>
+                    <p>We analyzed the finger movements of 100+ wpm typists to create a layout that feels entirely natural. No awkward stretching—your hands stay on the home row while you play complex melodies.</p>
+                </div>
+                <div class="feature-card reveal delay-2">
+                    <div class="icon-box">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    </div>
+                    <h3>Real Piano Feel</h3>
+                    <p>Built directly on the low-level Web Audio API. This means absolute zero latency between your keystroke and the sound. You get the immediate, tactile feedback of a real physical instrument.</p>
+                </div>
+                <div class="feature-card reveal delay-3">
+                    <div class="icon-box">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M16 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M10.828 9.828a4 4 0 1 0 -5.656 0l2.828 2.829l2.828 -2.829z"/><path d="M18.828 9.828a4 4 0 1 0 -5.656 0l2.828 2.829l2.828 -2.829z"/></svg>
+                    </div>
+                    <h3>Muscle Memory</h3>
+                    <p>Your typing speed translates directly to musical tempo. By leveraging the muscle memory you already have, the learning curve from QWERTY to playing the piano is practically nonexistent.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 TypeTone. Crafted for the modern typist.</p>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <h2>Welcome Back</h2>
+            <p>Sign in to save your custom keybindings, track your progress, and access the pro dashboard.</p>
+            <button class="google-btn" onclick="googleLogin()">
+                <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                Continue with Google
+            </button>
+            <button class="close-btn" onclick="closeModal()">Cancel</button>
         </div>
-
     </div>
 
-</section>
+    <!-- UI Interactions & Audio Engine -->
+    <script>
+        // Loader
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            loader.style.visibility = 'hidden';
+        });
 
-<!-- FEATURES -->
-
-<section class="features">
-
-    <h2 class="section-title">
-        Why TypeTone?
-    </h2>
-
-    <div class="cards">
-
-        <div class="card">
-            <h3>⚡ Ergonomic Layout</h3>
-
-            <p>
-                Specially designed keyboard mapping that
-                removes awkward jumps while typing melodies.
-            </p>
-        </div>
-
-        <div class="card">
-            <h3>🎹 Real Piano Feel</h3>
-
-            <p>
-                Web Audio powered responsive sound engine
-                with instant low-latency playback.
-            </p>
-        </div>
-
-        <div class="card">
-            <h3>⌨️ Built For Typists</h3>
-
-            <p>
-                Play music naturally using the same
-                muscle memory used for fast typing.
-            </p>
-        </div>
-
-    </div>
-
-</section>
-
-<!-- LOGIN MODAL -->
-
-<div class="modal" id="authModal">
-
-    <div class="modal-content">
-
-        <h2>
-            Welcome to TypeTone
-        </h2>
-
-        <p>
-            Continue with Google to save your profile,
-            access dashboard and use piano tools.
-        </p>
-
-        <button class="google-btn" onclick="googleLogin()">
-            Continue with Google
-        </button>
-
-        <div class="close-btn" onclick="closeModal()">
-            Close
-        </div>
-
-    </div>
-
-</div>
-
-<!-- FIREBASE -->
-
-<script type="module">
-
-import { auth, db } from "./firebase.js";
-
-import {
-    GoogleAuthProvider,
-    signInWithPopup
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-    doc,
-    getDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const provider = new GoogleAuthProvider();
-
-window.googleLogin = async function(){
-
-    try{
-
-        const result =
-            await signInWithPopup(auth, provider);
-
-        const user = result.user;
-
-        // CHECK USER EXISTS
-
-        const userRef =
-            doc(db, "users", user.uid);
-
-        const userSnap =
-            await getDoc(userRef);
-
-        // EXISTING USER
-
-        if(userSnap.exists()){
-
-            localStorage.setItem(
-                "user",
-                JSON.stringify(userSnap.data())
-            );
-
-            window.location.href =
-                "dashboard.html";
+        // Scroll Reveal & Number Counter
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
         }
 
-        // NEW USER
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    // Check if it has stats to animate
+                    const stats = entry.target.querySelectorAll('.stat-num');
+                    stats.forEach(stat => {
+                        if(!stat.classList.contains('counted')){
+                            stat.classList.add('counted');
+                            animateValue(stat, 0, parseInt(stat.getAttribute('data-val')), 2000);
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
 
-        else{
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-            localStorage.setItem(
-                "tempUser",
-                JSON.stringify({
-                    uid:user.uid,
-                    email:user.email
-                })
-            );
+        // Navbar Styling on Scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        });
 
-            window.location.href =
-                "register.html";
+        // 3D Mouse Parallax for Hero Piano
+        const heroSection = document.querySelector('.hero');
+        const piano3D = document.getElementById('piano-3d');
+        
+        heroSection.addEventListener('mousemove', (e) => {
+            if(window.innerWidth < 1024) return;
+            const x = (e.clientX / window.innerWidth - 0.5) * 10;
+            const y = (e.clientY / window.innerHeight - 0.5) * 10;
+            piano3D.style.transform = `rotateX(${25 - y}deg) rotateY(${x}deg) translateY(-10px)`;
+        });
+        
+        heroSection.addEventListener('mouseleave', () => {
+            piano3D.style.transform = '';
+        });
+
+        // Card Mouse Glow Effect
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            });
+        });
+
+        // Ambient Particles Animation
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.3 - 0.15;
+                this.speedY = Math.random() * -0.3 - 0.1;
+                this.opacity = Math.random() * 0.4 + 0.1;
+                this.color = Math.random() > 0.5 ? '147, 197, 253' : '196, 181, 253';
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) {
+                    this.y = canvas.height;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = `rgb(${this.color})`;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = `rgb(${this.color})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        
+        function initParticles() {
+            particles = [];
+            let particleCount = Math.min(window.innerWidth / 15, 80);
+            for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+        }
+        
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        
+        initParticles();
+        animateParticles();
+
+        // ----------------------------------------------------
+        // WEB AUDIO ENGINE & INTERACTIVE PIANO
+        // ----------------------------------------------------
+        let audioCtx = null;
+        let filterNode = null;
+        let isAudioInit = false;
+
+        function initAudio() {
+            if(isAudioInit) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            filterNode = audioCtx.createBiquadFilter();
+            filterNode.type = "lowpass";
+            filterNode.frequency.value = 2500;
+            filterNode.connect(audioCtx.destination);
+            isAudioInit = true;
         }
 
-    }
-    catch(error){
+        function playTone(freq) {
+            if(!isAudioInit) initAudio();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc.type = 'triangle'; // Mellow, bell-like piano tone
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            // Envelope
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 0.02);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+            
+            osc.connect(gainNode);
+            gainNode.connect(filterNode);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 1.5);
+            
+            createSoundWaveVisual();
+        }
 
-        console.log(error);
+        function createSoundWaveVisual() {
+            const wave = document.createElement('div');
+            wave.classList.add('sound-wave');
+            
+            // Randomize position slightly around the center
+            const offsetX = (Math.random() - 0.5) * 100;
+            const offsetY = (Math.random() - 0.5) * 100;
+            wave.style.marginLeft = `${offsetX}px`;
+            wave.style.marginTop = `${offsetY}px`;
+            
+            document.body.appendChild(wave);
+            setTimeout(() => wave.remove(), 1200);
+        }
 
-        alert("Login failed.");
-    }
-}
+        // Frequencies for our 18 mapped keys (C4 to F5)
+        const noteFreqs = {
+            1: 261.63, 12: 277.18, 2: 293.66, 13: 311.13, 3: 329.63, 4: 349.23, 14: 369.99,
+            5: 392.00, 15: 415.30, 6: 440.00, 16: 466.16, 7: 493.88, 8: 523.25, 17: 554.37,
+            9: 587.33, 18: 622.25, 10: 659.25, 11: 698.46
+        };
 
-</script>
-<script>
+        const keyMapping = {
+            'a': 1, 'w': 12, 's': 2, 'e': 13, 'd': 3, 'f': 4, 't': 14,
+            'g': 5, 'y': 15, 'h': 6, 'u': 16, 'j': 7, 'k': 8, 'o': 17,
+            'l': 9, 'p': 18, ';': 10, "'": 11
+        };
 
-/* ========= MODAL ========= */
+        let autoPlayActive = true;
 
-function openModal(){
+        // Auto-play random notes until user interaction
+        const keys = document.querySelectorAll('.key');
+        const kbKeys = document.querySelectorAll('.kb-key');
+        
+        const autoPlayInterval = setInterval(() => {
+            if(!autoPlayActive) {
+                clearInterval(autoPlayInterval);
+                return;
+            }
+            const randomKey = keys[Math.floor(Math.random() * keys.length)];
+            randomKey.classList.add('active');
+            setTimeout(() => {
+                randomKey.classList.remove('active');
+            }, 150);
+        }, 800);
 
-    document.getElementById("authModal")
-    .style.display = "flex";
-}
+        // Interaction logic
+        function triggerNote(noteId, keyChar) {
+            autoPlayActive = false;
+            
+            // Visual for Piano Key
+            const keyEl = document.querySelector(`.key[data-note="${noteId}"]`);
+            if(keyEl) {
+                keyEl.classList.add('active');
+                setTimeout(() => keyEl.classList.remove('active'), 200);
+            }
+            
+            // Visual for Map Key
+            if(keyChar) {
+                const kbEl = document.querySelector(`.kb-key[data-key="${keyChar}"]`);
+                if(kbEl) {
+                    kbEl.classList.add('active');
+                    setTimeout(() => kbEl.classList.remove('active'), 200);
+                }
+            }
+            
+            playTone(noteFreqs[noteId]);
+        }
 
-function closeModal(){
+        // Mouse Listeners
+        keys.forEach(keyEl => {
+            keyEl.addEventListener('mousedown', () => {
+                const noteId = parseInt(keyEl.getAttribute('data-note'));
+                // Attempt to find the mapped char for visual sync
+                let mappedChar = null;
+                for(let char in keyMapping){
+                    if(keyMapping[char] === noteId) mappedChar = char;
+                }
+                triggerNote(noteId, mappedChar);
+            });
+        });
 
-    document.getElementById("authModal")
-    .style.display = "none";
-}
+        // Keyboard Listeners
+        window.addEventListener('keydown', (e) => {
+            if (e.repeat || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            const char = e.key.toLowerCase();
+            if (keyMapping[char]) {
+                e.preventDefault();
+                triggerNote(keyMapping[char], char);
+            }
+        });
 
-window.openModal = openModal;
-window.closeModal = closeModal;
+        // Modal Functions
+        const modal = document.getElementById('authModal');
+        function openModal() { modal.classList.add('active'); }
+        function closeModal() { modal.classList.remove('active'); }
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+    </script>
 
-</script>
+    <!-- FIREBASE -->
+    <script type="module">
+        import { auth, db } from "./firebase.js";
+        import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+        const provider = new GoogleAuthProvider();
+
+        window.googleLogin = async function() {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+
+                // CHECK USER EXISTS
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                // EXISTING USER
+                if(userSnap.exists()) {
+                    localStorage.setItem("user", JSON.stringify(userSnap.data()));
+                    window.location.href = "dashboard.html";
+                }
+                // NEW USER
+                else {
+                    localStorage.setItem("tempUser", JSON.stringify({ uid: user.uid, email: user.email }));
+                    window.location.href = "register.html";
+                }
+            } catch(error) {
+                console.log(error);
+                alert("Login failed.");
+            }
+        }
+    </script>
 </body>
 </html>
