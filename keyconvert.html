@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Piano Key Converter</title>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<style>
+
+:root{
+    --bg:#050505;
+    --card:rgba(255,255,255,0.04);
+    --border:rgba(255,255,255,0.08);
+    --text:#ffffff;
+    --muted:#94a3b8;
+    --accent:#60a5fa;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:white;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+.bg{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+}
+
+.orb{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:0.35;
+}
+
+.orb1{
+    width:500px;
+    height:500px;
+    background:#2563eb;
+    top:-150px;
+    right:-120px;
+}
+
+.orb2{
+    width:500px;
+    height:500px;
+    background:#7c3aed;
+    bottom:-180px;
+    left:-120px;
+}
+
+.container{
+    width:90%;
+    max-width:1100px;
+    margin:auto;
+    padding:50px 0;
+}
+
+.title{
+    font-size:52px;
+    font-weight:800;
+    margin-bottom:15px;
+}
+
+.subtitle{
+    color:var(--muted);
+    margin-bottom:40px;
+    line-height:1.7;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:28px;
+    padding:30px;
+    backdrop-filter:blur(20px);
+    margin-bottom:30px;
+}
+
+.section-title{
+    font-size:24px;
+    margin-bottom:20px;
+}
+
+textarea{
+    width:100%;
+    min-height:180px;
+    resize:vertical;
+    background:#0b0b0b;
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:18px;
+    padding:20px;
+    color:white;
+    font-size:16px;
+    line-height:1.8;
+    outline:none;
+}
+
+textarea:focus{
+    border-color:#60a5fa;
+    box-shadow:0 0 25px rgba(96,165,250,0.25);
+}
+
+.buttons{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-top:20px;
+}
+
+button{
+    padding:14px 24px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.25s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+}
+
+.output{
+    margin-top:25px;
+    background:#0a0a0a;
+    border-radius:18px;
+    padding:20px;
+    min-height:120px;
+    line-height:1.8;
+    border:1px solid rgba(255,255,255,0.08);
+    white-space:pre-wrap;
+    word-wrap:break-word;
+}
+
+.mapping-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+    margin-top:20px;
+}
+
+.map-card{
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:18px;
+    padding:18px;
+}
+
+.note{
+    color:#60a5fa;
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.key{
+    color:white;
+    font-size:18px;
+}
+
+.helper{
+    color:var(--muted);
+    margin-top:15px;
+    line-height:1.7;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+</div>
+
+<div class="container">
+
+    <h1 class="title">
+        🎼 Piano Key Converter
+    </h1>
+
+    <p class="subtitle">
+        Convert standard piano notes into TypeTone keyboard keys instantly.
+        Example: C D E F G A B → Q W E R T Y U
+    </p>
+
+    <div class="card">
+
+        <div class="section-title">
+            Enter Piano Notes
+        </div>
+
+        <textarea id="input"
+placeholder="Example:
+C D E F G A B
+C# D# F# G# A#"></textarea>
+
+        <div class="buttons">
+
+            <button onclick="convertNotes()">
+                Convert Notes
+            </button>
+
+            <button onclick="copyOutput()">
+                Copy Output
+            </button>
+
+            <button onclick="clearAll()">
+                Clear
+            </button>
+
+        </div>
+
+        <div class="output"
+             id="output">
+
+            Converted keys will appear here...
+
+        </div>
+
+        <div class="helper">
+            Supported Notes:
+            C D E F G A B C# D# F# G# A#
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="section-title">
+            Note Mapping
+        </div>
+
+        <div class="mapping-grid">
+
+            <div class="map-card">
+                <div class="note">C</div>
+                <div class="key">Q</div>
+            </div>
+
+            <div class="map-card">
+                <div class="note">C#</div>
+                <div class="key">1</div>
+            </div>
+
+            <div class="map-card">
+                <div class="note">D</div>
+                <div class="key">W</div>
+            </div>
+
+            <div class="map-card">
+                <div class="note">D#</div>
+                <div class="key">2</div>
+            </div>
+
+            <div class="map-card">
+                <div class="note">E</div>
+                <div class="key">E</div>
+            </div>
+
+            <div class="map-card">
+                <div class="note">F</div>
+                <div class="key">R</div>
+            </div>
+
+            <div class="map-card">
+                <div class="note">F#</div>
+                <div class="key">3</div>
+            </div>
+
+            <div class="map-card">
+                <div class="note">G</div>
+                <div class="key">T</div>
+            </div>
+
+            <div class="map-card">
+                <div class="note">G#</div>
+                <div class="key">4</div>
+            </div>
+
+            <div class="map-card">
+                <div class="note">A</div>
+                <div class="key">Y</div>
+            </div>
+
+            <div class="map-card">
+                <div class="note">A#</div>
+                <div class="key">5</div>
+            </div>
+
+            <div class="map-card">
+                <div class="note">B</div>
+                <div class="key">U</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const noteMap = {
+
+    "C":"Q",
+    "C#":"1",
+
+    "D":"W",
+    "D#":"2",
+
+    "E":"E",
+
+    "F":"R",
+    "F#":"3",
+
+    "G":"T",
+    "G#":"4",
+
+    "A":"Y",
+    "A#":"5",
+
+    "B":"U"
+};
+
+function convertNotes(){
+
+    const input =
+        document.getElementById("input")
+        .value
+        .toUpperCase();
+
+    const notes =
+        input.split(/\s+/);
+
+    let result = [];
+
+    notes.forEach(note=>{
+
+        if(noteMap[note]){
+
+            result.push(noteMap[note]);
+        }
+
+        else{
+
+            result.push("?");
+        }
+    });
+
+    document.getElementById("output")
+    .innerText =
+        result.join(" ");
+}
+
+function copyOutput(){
+
+    const text =
+        document.getElementById("output")
+        .innerText;
+
+    navigator.clipboard.writeText(text);
+
+    alert("Copied!");
+}
+
+function clearAll(){
+
+    document.getElementById("input").value = "";
+
+    document.getElementById("output")
+    .innerText =
+        "Converted keys will appear here...";
+}
+
+</script>
+
+</body>
+</html>
