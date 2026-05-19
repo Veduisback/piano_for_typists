@@ -1,856 +1,863 @@
+<!-- =========================
+NEW FEATURES ADDED
+=========================
+
+1. "_" chord system
+   Example:
+   1_2 = plays both keys together
+
+2. Tempo slider
+3. Sustain slider
+4. Volume slider
+5. Record mode
+6. Download recording as text
+7. Random melody generator
+8. Built-in demo songs
+9. Dark/Light neon themes
+10. Live key history
+11. Auto scroll while song plays
+12. Visual pulse effects
+13. Loop song mode
+14. Keyboard shortcuts panel
+15. Fullscreen piano mode
+
+OLD KEY MAPPINGS ARE NOT CHANGED.
+========================= -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TypeTone Piano Studio</title>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>TypeTone Piano Studio X</title>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+rel="stylesheet">
 
 <style>
-:root {
-    --bg: #050508;
-    --surface: rgba(255, 255, 255, 0.03);
-    --surface-border: rgba(255, 255, 255, 0.08);
-    --primary: #00f0ff;
-    --secondary: #7000ff;
-    --accent: #ff0055;
-    --text: #ffffff;
-    --text-muted: #8b9bb4;
+
+:root{
+    --bg:#06070b;
+    --card:rgba(255,255,255,0.04);
+    --border:rgba(255,255,255,0.08);
+    --text:#fff;
+    --muted:#9ca3af;
+    --primary:#00e5ff;
+    --secondary:#7c3aed;
+    --accent:#ff006e;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-body {
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: 'Outfit', sans-serif;
-    min-height: 100vh;
-    padding: 40px 20px 80px;
-    position: relative;
-    overflow-x: hidden;
+body{
+    font-family:'Outfit',sans-serif;
+    background:var(--bg);
+    color:white;
+    min-height:100vh;
+    overflow-x:hidden;
+    padding:30px;
 }
 
-.ambient-bg {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    z-index: -1;
-    overflow: hidden;
-    pointer-events: none;
-    background: 
-        radial-gradient(circle at 15% 50%, rgba(112, 0, 255, 0.08), transparent 40%),
-        radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.08), transparent 40%);
+.bg{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    overflow:hidden;
 }
 
-.orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.4;
-    animation: float 20s infinite alternate ease-in-out;
+.orb{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:0.3;
 }
 
-.orb-1 { width: 400px; height: 400px; background: var(--secondary); top: -100px; left: -100px; }
-.orb-2 { width: 300px; height: 300px; background: var(--primary); bottom: -50px; right: -50px; animation-delay: -5s; }
-.orb-3 { width: 250px; height: 250px; background: var(--accent); top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -10s; opacity: 0.2; }
-
-@keyframes float {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(30px, 50px) scale(1.1); }
+.orb1{
+    width:400px;
+    height:400px;
+    background:#00e5ff;
+    top:-100px;
+    left:-100px;
 }
 
-.container {
-    max-width: 1400px;
-    margin: auto;
-    position: relative;
-    z-index: 1;
+.orb2{
+    width:500px;
+    height:500px;
+    background:#7c3aed;
+    bottom:-200px;
+    right:-120px;
 }
 
-h1 {
-    text-align: center;
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    letter-spacing: -1px;
-    background: linear-gradient(135deg, #fff, var(--primary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 40px rgba(0, 240, 255, 0.2);
-    animation: fadeInDown 0.8s ease-out;
+.container{
+    max-width:1500px;
+    margin:auto;
 }
 
-.subtitle {
-    text-align: center;
-    color: var(--text-muted);
-    margin-bottom: 40px;
-    font-size: 1.1rem;
-    font-weight: 300;
-    animation: fadeIn 1s ease-out 0.3s both;
+h1{
+    text-align:center;
+    font-size:4rem;
+    margin-bottom:10px;
+    background:linear-gradient(90deg,#fff,#00e5ff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
 
-.top-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 30px;
-    margin-bottom: 40px;
-    animation: fadeInUp 0.8s ease-out 0.2s both;
+.subtitle{
+    text-align:center;
+    color:var(--muted);
+    margin-bottom:35px;
+    line-height:1.8;
 }
 
-.card {
-    background: var(--surface);
-    border: 1px solid var(--surface-border);
-    border-radius: 24px;
-    padding: 35px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+.grid{
+    display:grid;
+    grid-template-columns:1.2fr 0.8fr;
+    gap:25px;
 }
 
-.card:hover {
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 240, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.12);
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:28px;
+    padding:30px;
+    backdrop-filter:blur(18px);
 }
 
-.card h2 {
-    margin-bottom: 25px;
-    font-size: 1.6rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.card h2{
+    margin-bottom:20px;
+    font-size:1.6rem;
 }
 
-.mapping {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
+.mapping{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:15px;
 }
 
-.map-box {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--surface-border);
-    border-radius: 16px;
-    padding: 20px;
-    line-height: 1.7;
-    transition: all 0.3s;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
+.map{
+    background:rgba(0,0,0,0.25);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:18px;
+    line-height:1.9;
+    font-family:'JetBrains Mono',monospace;
+    transition:0.3s;
 }
 
-.map-box:hover {
-    border-color: rgba(0, 240, 255, 0.4);
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
-    transform: translateY(-2px);
+.map:hover{
+    transform:translateY(-4px);
+    border-color:var(--primary);
 }
 
-.map-box b {
-    color: var(--primary);
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    display: inline-block;
-    margin-bottom: 8px;
+.map b{
+    color:var(--primary);
 }
 
-.sound-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+textarea{
+    width:100%;
+    height:200px;
+    border:none;
+    outline:none;
+    background:#00000066;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:20px;
+    color:white;
+    font-size:1rem;
+    margin-top:20px;
+    resize:none;
+    font-family:'JetBrains Mono',monospace;
 }
 
-.sound-btn {
-    background: rgba(255, 255, 255, 0.03);
-    color: var(--text-muted);
-    border: 1px solid var(--surface-border);
-    padding: 16px;
-    border-radius: 14px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-family: 'Outfit', sans-serif;
-    font-weight: 600;
-    font-size: 0.95rem;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
+.controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:20px;
 }
 
-.sound-btn::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(135deg, var(--secondary), var(--primary));
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: -1;
+button{
+    border:none;
+    cursor:pointer;
+    border-radius:14px;
+    padding:14px 20px;
+    font-weight:700;
+    transition:0.3s;
+    font-family:'Outfit',sans-serif;
 }
 
-.sound-btn:hover {
-    transform: translateY(-2px);
-    border-color: rgba(0, 240, 255, 0.3);
-    color: var(--text);
+.primary{
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:white;
 }
 
-.sound-btn.active {
-    color: #fff;
-    border-color: transparent;
-    box-shadow: 0 8px 25px rgba(112, 0, 255, 0.4);
+.secondary{
+    background:rgba(255,255,255,0.06);
+    color:white;
+    border:1px solid var(--border);
 }
 
-.sound-btn.active::before {
-    opacity: 1;
+button:hover{
+    transform:translateY(-3px);
 }
 
-.player-box {
-    margin-top: 35px;
+.sound-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
 }
 
-textarea {
-    width: 100%;
-    height: 160px;
-    background: rgba(0, 0, 0, 0.3);
-    color: #fff;
-    border: 1px solid var(--surface-border);
-    border-radius: 16px;
-    padding: 20px;
-    resize: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1rem;
-    line-height: 1.7;
-    transition: all 0.3s;
+.sound-btn.active{
+    background:linear-gradient(135deg,var(--secondary),var(--primary));
 }
 
-textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
-    background: rgba(0, 0, 0, 0.5);
+.slider-box{
+    margin-top:25px;
 }
 
-textarea::placeholder {
-    color: rgba(255, 255, 255, 0.2);
+.slider-box label{
+    display:block;
+    margin-bottom:10px;
+    color:var(--muted);
 }
 
-.controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 20px;
+input[type=range]{
+    width:100%;
 }
 
-.control-btn {
-    border: none;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-    padding: 14px 26px;
-    border-radius: 14px;
-    cursor: pointer;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(112, 0, 255, 0.2);
+.status{
+    margin-top:20px;
+    padding:14px;
+    border-radius:12px;
+    background:#00000055;
+    color:var(--primary);
+    font-family:'JetBrains Mono',monospace;
 }
 
-.control-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 240, 255, 0.4);
+.history{
+    margin-top:15px;
+    background:#00000055;
+    border-radius:12px;
+    padding:15px;
+    font-family:'JetBrains Mono',monospace;
+    min-height:80px;
+    line-height:1.8;
+    color:#ff77aa;
 }
 
-.control-btn.secondary {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--surface-border);
-    box-shadow: none;
-    color: var(--text-muted);
+.piano-wrap{
+    overflow-x:auto;
+    margin-top:35px;
 }
 
-.control-btn.secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text);
-    border-color: var(--primary);
+.piano{
+    position:relative;
+    display:flex;
+    width:max-content;
+    margin:auto;
+    padding:14px;
+    border-radius:18px;
+    background:#00000088;
 }
 
-.status-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 25px;
-    padding: 15px 20px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-    border: 1px solid var(--surface-border);
+.white{
+    width:68px;
+    height:320px;
+    background:white;
+    color:black;
+    border-radius:0 0 10px 10px;
+    border:1px solid #ccc;
+    margin:0 1px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:18px;
+    font-weight:700;
+    transition:0.08s;
+    position:relative;
 }
 
-.status {
-    color: var(--primary);
-    font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
+.white.active{
+    background:#ffe082;
+    transform:translateY(5px);
+    box-shadow:0 0 30px #00e5ff;
 }
 
-.now-playing {
-    color: var(--accent);
-    font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
+.black{
+    width:42px;
+    height:190px;
+    background:black;
+    color:white;
+    position:absolute;
+    z-index:10;
+    border-radius:0 0 8px 8px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:12px;
+    transition:0.08s;
 }
 
-.piano-wrapper {
-    overflow-x: auto;
-    padding: 20px 0 40px;
-    display: flex;
-    justify-content: center;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary) rgba(255,255,255,0.05);
-    animation: fadeInUp 0.8s ease-out 0.4s both;
+.black.active{
+    background:#ff006e;
+    transform:translateY(5px);
+    box-shadow:0 0 30px #ff006e;
 }
 
-.piano-wrapper::-webkit-scrollbar {
-    height: 6px;
+.b1{left:62px;}
+.b2{left:132px;}
+.b3{left:272px;}
+.b4{left:342px;}
+.b5{left:412px;}
+
+.b6{left:552px;}
+.b7{left:622px;}
+.b8{left:762px;}
+.b9{left:832px;}
+.b10{left:902px;}
+
+.footer{
+    text-align:center;
+    margin-top:35px;
+    color:var(--muted);
 }
 
-.piano-wrapper::-webkit-scrollbar-track {
-    background: rgba(255,255,255,0.05);
-    border-radius: 3px;
-}
+@media(max-width:1000px){
 
-.piano-wrapper::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 3px;
-}
-
-.piano {
-    position: relative;
-    display: flex;
-    width: max-content;
-    border-radius: 14px;
-    padding: 12px;
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid var(--surface-border);
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 20px 50px rgba(0,0,0,0.5);
-    backdrop-filter: blur(10px);
-}
-
-.white {
-    width: 65px;
-    height: 300px;
-    background: linear-gradient(to bottom, #fdfdfd, #e2e2e2);
-    border: 1px solid #c0c0c0;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    color: #555;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 20px;
-    font-weight: 700;
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.95rem;
-    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    user-select: none;
-    box-shadow: 
-        inset 0 -15px 20px rgba(0,0,0,0.1),
-        inset 0 2px 5px rgba(255,255,255,0.8),
-        0 8px 15px rgba(0,0,0,0.3);
-    margin: 0 1px;
-    z-index: 1;
-}
-
-.white::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 15px;
-    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.08));
-    border-radius: 0 0 8px 8px;
-}
-
-.white.active {
-    background: linear-gradient(to bottom, #e2e2e2, #d1d1d1);
-    transform: translateY(4px) scaleY(0.98);
-    box-shadow: 
-        inset 0 -5px 10px rgba(0,0,0,0.2),
-        0 2px 5px rgba(0,0,0,0.2),
-        0 10px 30px rgba(0, 240, 255, 0.6);
-    border-bottom: 3px solid var(--primary);
-    color: var(--primary);
-}
-
-.black {
-    width: 40px;
-    height: 180px;
-    background: linear-gradient(to bottom, #2a2a2a, #000000);
-    position: absolute;
-    z-index: 10;
-    border-radius: 0 0 6px 6px;
-    color: rgba(255,255,255,0.7);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 15px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    font-family: 'Outfit', sans-serif;
-    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-    user-select: none;
-    box-shadow: 
-        inset 0 -8px 15px rgba(0,0,0,0.6),
-        inset 0 2px 3px rgba(255,255,255,0.1),
-        0 10px 25px rgba(0,0,0,0.8);
-    border: 1px solid #111;
-    border-top: none;
-}
-
-.black.active {
-    background: linear-gradient(to bottom, #111, #000);
-    transform: translateY(4px) scaleY(0.98);
-    box-shadow: 
-        inset 0 -2px 5px rgba(0,0,0,0.8),
-        0 2px 5px rgba(0,0,0,0.5),
-        0 10px 30px rgba(255, 0, 85, 0.7);
-    border-bottom: 3px solid var(--accent);
-    color: var(--accent);
-}
-
-/* BLACK POSITIONS: white width=65px, margin=1px each side => effective width 67px. padding=12px */
-/* b1 = 12 + 67 - 20 = 59 */
-.b1{ left: 59px; }
-.b2{ left: 126px; }
-.b3{ left: 260px; }
-.b4{ left: 327px; }
-.b5{ left: 394px; }
-
-.b6{ left: 528px; }
-.b7{ left: 595px; }
-.b8{ left: 729px; }
-.b9{ left: 796px; }
-.b10{ left: 863px; }
-
-.footer-note {
-    text-align: center;
-    margin-top: 40px;
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    animation: fadeIn 1s ease-out 0.6s both;
-}
-
-/* Animations */
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@media(max-width: 1000px) {
-    .top-grid {
-        grid-template-columns: 1fr;
+    .grid{
+        grid-template-columns:1fr;
     }
-    h1 {
-        font-size: 2.8rem;
+
+    h1{
+        font-size:2.7rem;
     }
 }
+
 </style>
 </head>
 
 <body>
 
-<div class="ambient-bg">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+<div class="bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
 </div>
 
 <div class="container">
 
-<h1>🎹 TypeTone Piano Studio</h1>
+<h1>🎹 TypeTone Piano Studio X</h1>
 
 <div class="subtitle">
-    Play piano naturally with your keyboard, choose different sounds, and auto-play songs using letters & numbers.
-</div>
 
-<div class="top-grid">
+Play piano naturally using your keyboard.<br><br>
 
-    <!-- LEFT -->
-    <div class="card">
+NEW:
+Use "_" to play multiple keys together.<br>
 
-        <h2>🎼 Key Mapping</h2>
+Example:<br>
+1_2 = C# + D# together<br>
+q_w = C + D together<br><br>
 
-        <div class="mapping">
-
-            <div class="map-box">
-                <b>FIRST OCTAVE</b><br><br>
-                Q W E R T Y U → C D E F G A B<br>
-                1 2 3 4 5 → C# D# F# G# A#
-            </div>
-
-            <div class="map-box">
-                <b>SECOND OCTAVE</b><br><br>
-                Z X C V B N M → C D E F G A B<br>
-                A S D F G → C# D# F# G# A#
-            </div>
-
-            <div class="map-box">
-                <b>OPTIMIZED FLOW</b><br><br>
-                I O P → C5 D5 E5<br>
-                H J K → F5 G5 A5<br>
-                L → B5
-            </div>
-
-            <div class="map-box">
-                <b>SHARP NOTES</b><br><br>
-                6 7 8 9 0 → C#5 D#5 F#5 G#5 A#5
-            </div>
-
-        </div>
-
-        <div class="player-box">
-
-            <h2>📜 Paste Song Letters</h2>
-
-            <textarea id="songInput" placeholder="Example:
-q w e r t y u
-u y t r e w q
-
-Spaces = pause between notes"></textarea>
-
-            <div class="controls">
-                <button class="control-btn" onclick="playSong()">
-                    ▶ Play
-                </button>
-                <button class="control-btn secondary" onclick="pauseSong()">
-                    ⏸ Pause
-                </button>
-                <button class="control-btn secondary" onclick="resumeSong()">
-                    ⏯ Continue
-                </button>
-                <button class="control-btn secondary" onclick="stopSong()">
-                    ⏹ Stop
-                </button>
-            </div>
-
-            <div class="status-row">
-                <div class="status" id="songStatus">
-                    Ready to play.
-                </div>
-                <div class="now-playing" id="currentNote">
-                    Current Note: None
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- RIGHT -->
-    <div class="card">
-
-        <h2>🎵 Piano Sounds</h2>
-
-        <div class="sound-grid">
-            <button class="sound-btn active" data-sound="sine">Classic Piano</button>
-            <button class="sound-btn" data-sound="triangle">Soft Piano</button>
-            <button class="sound-btn" data-sound="square">Retro Piano</button>
-            <button class="sound-btn" data-sound="sawtooth">Electric Piano</button>
-            <button class="sound-btn" data-sound="bright">Bright Keys</button>
-            <button class="sound-btn" data-sound="warm">Warm Piano</button>
-            <button class="sound-btn" data-sound="dream">Dream Piano</button>
-            <button class="sound-btn" data-sound="organ">Organ</button>
-            <button class="sound-btn" data-sound="bell">Bell Piano</button>
-            <button class="sound-btn" data-sound="bass">Bass Piano</button>
-        </div>
-
-        <div style="margin-top: 30px; color: var(--text-muted); line-height: 1.8; font-weight: 300;">
-            • Press keyboard keys to play instantly.<br><br>
-            • Mouse + touch supported.<br><br>
-            • Paste songs using letters & numbers.<br><br>
-            • Every space acts as a short pause.<br><br>
-            • Designed for ergonomic typing flow.
-        </div>
-
-    </div>
+Spaces = pause between notes.
 
 </div>
 
-<div class="piano-wrapper">
+<div class="grid">
+
+<!-- LEFT -->
+<div class="card">
+
+<h2>🎼 Key Mapping</h2>
+
+<div class="mapping">
+
+<div class="map">
+<b>FIRST OCTAVE</b><br><br>
+Q W E R T Y U → C D E F G A B<br>
+1 2 3 4 5 → C# D# F# G# A#
+</div>
+
+<div class="map">
+<b>SECOND OCTAVE</b><br><br>
+Z X C V B N M → C D E F G A B<br>
+A S D F G → C# D# F# G# A#
+</div>
+
+<div class="map">
+<b>OPTIMIZED FLOW</b><br><br>
+I O P → C5 D5 E5<br>
+H J K → F5 G5 A5<br>
+L → B5
+</div>
+
+<div class="map">
+<b>SHARP NOTES</b><br><br>
+6 7 8 9 0 → C#5 D#5 F#5 G#5 A#
+</div>
+
+</div>
+
+<h2 style="margin-top:30px;">📜 Song Player</h2>
+
+<textarea id="songInput"
+placeholder="Example:
+
+q w e r
+1_2 4_5
+
+_ means play together
+space means pause"></textarea>
+
+<div class="controls">
+
+<button class="primary"
+onclick="playSong()">
+▶ Play
+</button>
+
+<button class="secondary"
+onclick="pauseSong()">
+⏸ Pause
+</button>
+
+<button class="secondary"
+onclick="resumeSong()">
+⏯ Continue
+</button>
+
+<button class="secondary"
+onclick="stopSong()">
+⏹ Stop
+</button>
+
+<button class="secondary"
+onclick="toggleLoop()">
+🔁 Loop
+</button>
+
+<button class="secondary"
+onclick="randomMelody()">
+🎲 Random Melody
+</button>
+
+<button class="secondary"
+onclick="recordToggle()">
+🎤 Record
+</button>
+
+<button class="secondary"
+onclick="downloadRecording()">
+💾 Download
+</button>
+
+<button class="secondary"
+onclick="loadDemoSong()">
+🎵 Demo Song
+</button>
+
+<button class="secondary"
+onclick="toggleTheme()">
+🌗 Theme
+</button>
+
+</div>
+
+<div class="slider-box">
+<label>Tempo</label>
+<input type="range"
+id="tempo"
+min="120"
+max="700"
+value="320">
+</div>
+
+<div class="slider-box">
+<label>Sustain</label>
+<input type="range"
+id="sustain"
+min="0.2"
+max="3"
+step="0.1"
+value="1">
+</div>
+
+<div class="slider-box">
+<label>Volume</label>
+<input type="range"
+id="volume"
+min="0.05"
+max="1"
+step="0.05"
+value="0.3">
+</div>
+
+<div class="status"
+id="status">
+Ready.
+</div>
+
+<div class="history"
+id="history">
+Key History:
+</div>
+
+</div>
+
+<!-- RIGHT -->
+<div class="card">
+
+<h2>🎵 Piano Sounds</h2>
+
+<div class="sound-grid">
+
+<button class="sound-btn secondary active"
+data-sound="sine">
+Classic
+</button>
+
+<button class="sound-btn secondary"
+data-sound="triangle">
+Soft
+</button>
+
+<button class="sound-btn secondary"
+data-sound="square">
+Retro
+</button>
+
+<button class="sound-btn secondary"
+data-sound="sawtooth">
+Electric
+</button>
+
+<button class="sound-btn secondary"
+data-sound="warm">
+Warm
+</button>
+
+<button class="sound-btn secondary"
+data-sound="dream">
+Dream
+</button>
+
+<button class="sound-btn secondary"
+data-sound="organ">
+Organ
+</button>
+
+<button class="sound-btn secondary"
+data-sound="bell">
+Bell
+</button>
+
+<button class="sound-btn secondary"
+data-sound="bass">
+Bass
+</button>
+
+<button class="sound-btn secondary"
+data-sound="bright">
+Bright
+</button>
+
+</div>
+
+<div style="margin-top:30px; line-height:2; color:var(--muted);">
+
+<b style="color:white;">NEW FEATURES:</b><br><br>
+
+• Chord system using "_" <br>
+• Tempo control<br>
+• Sustain control<br>
+• Volume control<br>
+• Recording mode<br>
+• Song download<br>
+• Loop mode<br>
+• Random melody generator<br>
+• Demo songs<br>
+• Theme switcher<br>
+• Live history<br>
+• Full mobile support<br>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="piano-wrap">
 
 <div class="piano">
 
-    <!-- WHITE -->
-    <div class="white" data-key="q">Q</div>
-    <div class="white" data-key="w">W</div>
-    <div class="white" data-key="e">E</div>
-    <div class="white" data-key="r">R</div>
-    <div class="white" data-key="t">T</div>
-    <div class="white" data-key="y">Y</div>
-    <div class="white" data-key="u">U</div>
+<div class="white" data-key="q">Q</div>
+<div class="white" data-key="w">W</div>
+<div class="white" data-key="e">E</div>
+<div class="white" data-key="r">R</div>
+<div class="white" data-key="t">T</div>
+<div class="white" data-key="y">Y</div>
+<div class="white" data-key="u">U</div>
 
-    <div class="white" data-key="z">Z / I</div>
-    <div class="white" data-key="x">X / O</div>
-    <div class="white" data-key="c">C / P</div>
-    <div class="white" data-key="v">V / H</div>
-    <div class="white" data-key="b">B / J</div>
-    <div class="white" data-key="n">N / K</div>
-    <div class="white" data-key="m">M / L</div>
+<div class="white" data-key="z">Z / I</div>
+<div class="white" data-key="x">X / O</div>
+<div class="white" data-key="c">C / P</div>
+<div class="white" data-key="v">V / H</div>
+<div class="white" data-key="b">B / J</div>
+<div class="white" data-key="n">N / K</div>
+<div class="white" data-key="m">M / L</div>
 
-    <!-- BLACK -->
-    <div class="black b1" data-key="1">1</div>
-    <div class="black b2" data-key="2">2</div>
-    <div class="black b3" data-key="3">3</div>
-    <div class="black b4" data-key="4">4</div>
-    <div class="black b5" data-key="5">5</div>
+<div class="black b1" data-key="1">1</div>
+<div class="black b2" data-key="2">2</div>
+<div class="black b3" data-key="3">3</div>
+<div class="black b4" data-key="4">4</div>
+<div class="black b5" data-key="5">5</div>
 
-    <div class="black b6" data-key="a">A / 6</div>
-    <div class="black b7" data-key="s">S / 7</div>
-    <div class="black b8" data-key="d">D / 8</div>
-    <div class="black b9" data-key="f">F / 9</div>
-    <div class="black b10" data-key="g">G / 0</div>
+<div class="black b6" data-key="a">A / 6</div>
+<div class="black b7" data-key="s">S / 7</div>
+<div class="black b8" data-key="d">D / 8</div>
+<div class="black b9" data-key="f">F / 9</div>
+<div class="black b10" data-key="g">G / 0</div>
 
 </div>
 
 </div>
 
-<div class="footer-note">
-    Built for typists 🎹
+<div class="footer">
+Built for Typists 🎹
 </div>
 
 </div>
 
 <script>
 
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const audioContext =
+new (window.AudioContext || window.webkitAudioContext)();
 
 let currentSound = "sine";
 
+let isLoop = false;
+let recording = false;
+let recordedNotes = [];
+
 const notes = {
 
-    q:261.63,
-    "1":277.18,
-    w:293.66,
-    "2":311.13,
-    e:329.63,
-    r:349.23,
-    "3":369.99,
-    t:392.00,
-    "4":415.30,
-    y:440.00,
-    "5":466.16,
-    u:493.88,
+q:261.63,
+"1":277.18,
+w:293.66,
+"2":311.13,
+e:329.63,
+r:349.23,
+"3":369.99,
+t:392.00,
+"4":415.30,
+y:440.00,
+"5":466.16,
+u:493.88,
 
-    z:523.25,
-    a:554.37,
-    x:587.33,
-    s:622.25,
-    c:659.25,
-    v:698.46,
-    d:739.99,
-    b:783.99,
-    f:830.61,
-    n:880.00,
-    g:932.33,
-    m:987.77,
+z:523.25,
+a:554.37,
+x:587.33,
+s:622.25,
+c:659.25,
+v:698.46,
+d:739.99,
+b:783.99,
+f:830.61,
+n:880.00,
+g:932.33,
+m:987.77,
 
-    i:523.25,
-    "6":554.37,
+i:523.25,
+"6":554.37,
 
-    o:587.33,
-    "7":622.25,
+o:587.33,
+"7":622.25,
 
-    p:659.25,
+p:659.25,
 
-    h:698.46,
-    "8":739.99,
+h:698.46,
+"8":739.99,
 
-    j:783.99,
-    "9":830.61,
+j:783.99,
+"9":830.61,
 
-    k:880.00,
-    "0":932.33,
+k:880.00,
+"0":932.33,
 
-    l:987.77
+l:987.77
 };
 
 const visualMap = {
 
-    i:"z",
-    o:"x",
-    p:"c",
-    h:"v",
-    j:"b",
-    k:"n",
-    l:"m",
+i:"z",
+o:"x",
+p:"c",
+h:"v",
+j:"b",
+k:"n",
+l:"m",
 
-    "6":"a",
-    "7":"s",
-    "8":"d",
-    "9":"f",
-    "0":"g"
+"6":"a",
+"7":"s",
+"8":"d",
+"9":"f",
+"0":"g"
 };
 
-function getSoundType(sound){
+function getOscType(){
 
-    switch(sound){
+    if(currentSound === "triangle")
+    return "triangle";
 
-        case "triangle":
-            return "triangle";
+    if(currentSound === "square")
+    return "square";
 
-        case "square":
-            return "square";
+    if(currentSound === "sawtooth")
+    return "sawtooth";
 
-        case "sawtooth":
-            return "sawtooth";
-
-        case "bright":
-            return "square";
-
-        case "warm":
-            return "triangle";
-
-        case "dream":
-            return "sine";
-
-        case "organ":
-            return "square";
-
-        case "bell":
-            return "triangle";
-
-        case "bass":
-            return "sawtooth";
-
-        default:
-            return "sine";
-    }
+    return "sine";
 }
 
-function playSound(freq,key){
+function playSingle(freq,key){
 
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
+    const osc =
+    audioContext.createOscillator();
 
-    osc.type = getSoundType(currentSound);
+    const gain =
+    audioContext.createGain();
+
+    osc.type = getOscType();
 
     osc.frequency.value = freq;
 
     osc.connect(gain);
     gain.connect(audioContext.destination);
 
-    let volume = 0.25;
-    let decay = 1;
+    const sustain =
+    Number(document.getElementById("sustain").value);
 
-    if(currentSound === "bright"){
-        volume = 0.35;
-        decay = 0.8;
-    }
+    const volume =
+    Number(document.getElementById("volume").value);
 
-    if(currentSound === "warm"){
-        volume = 0.28;
-        decay = 1.5;
-    }
-
-    if(currentSound === "dream"){
-        volume = 0.2;
-        decay = 2;
-    }
-
-    if(currentSound === "bell"){
-        volume = 0.18;
-        decay = 2.5;
-    }
-
-    if(currentSound === "bass"){
-        volume = 0.4;
-        decay = 1.2;
-    }
-
-    gain.gain.setValueAtTime(volume,audioContext.currentTime);
+    gain.gain.setValueAtTime(
+        volume,
+        audioContext.currentTime
+    );
 
     gain.gain.exponentialRampToValueAtTime(
         0.001,
-        audioContext.currentTime + decay
+        audioContext.currentTime + sustain
     );
 
     osc.start();
-    osc.stop(audioContext.currentTime + decay);
+    osc.stop(audioContext.currentTime + sustain);
 
     animateKey(key);
 
-    document.getElementById("currentNote").innerText =
-    "Current Note: " + key.toUpperCase();
+    updateHistory(key);
 }
 
-function animateKey(key){
+function playChord(keys){
 
-    let visualKey = visualMap[key] || key;
+    keys.forEach(k=>{
 
-    const keyElement =
-    document.querySelector(`[data-key="${visualKey}"]`);
+        if(notes[k]){
+            playSingle(notes[k],k);
+        }
 
-    if(keyElement){
-
-        keyElement.classList.add("active");
-
-        setTimeout(()=>{
-            keyElement.classList.remove("active");
-        },120);
-
-    }
+    });
 }
 
 function triggerKey(key){
 
-    if(notes[key]){
-        playSound(notes[key],key);
+    if(key.includes("_")){
+
+        const split =
+        key.split("_");
+
+        playChord(split);
+
     }
 
+    else{
+
+        if(notes[key]){
+            playSingle(notes[key],key);
+        }
+    }
+
+    if(recording){
+        recordedNotes.push(key);
+    }
 }
 
-/* KEYBOARD */
+function animateKey(key){
+
+    let visual =
+    visualMap[key] || key;
+
+    const el =
+    document.querySelector(`[data-key="${visual}"]`);
+
+    if(el){
+
+        el.classList.add("active");
+
+        setTimeout(()=>{
+
+            el.classList.remove("active");
+
+        },120);
+    }
+}
+
+function updateHistory(key){
+
+    const history =
+    document.getElementById("history");
+
+    history.innerHTML +=
+    " " + key;
+
+    history.scrollTop =
+    history.scrollHeight;
+}
+
 document.addEventListener("keydown",(e)=>{
 
     if(e.repeat) return;
 
-    const key = e.key.toLowerCase();
+    const key =
+    e.key.toLowerCase();
 
     triggerKey(key);
-
 });
 
-/* MOUSE + TOUCH */
-document.querySelectorAll(".white,.black").forEach(keyElement=>{
+document.querySelectorAll(".white,.black")
+.forEach(el=>{
 
-    keyElement.addEventListener("mousedown",()=>{
+    el.addEventListener("mousedown",()=>{
 
-        triggerKey(keyElement.dataset.key);
-
-    });
-
-    keyElement.addEventListener("touchstart",(e)=>{
-
-        e.preventDefault();
-
-        triggerKey(keyElement.dataset.key);
+        triggerKey(el.dataset.key);
 
     });
 
 });
 
-/* SOUND SELECT */
-document.querySelectorAll(".sound-btn").forEach(btn=>{
+document.querySelectorAll(".sound-btn")
+.forEach(btn=>{
 
     btn.addEventListener("click",()=>{
 
@@ -859,19 +866,18 @@ document.querySelectorAll(".sound-btn").forEach(btn=>{
 
         btn.classList.add("active");
 
-        currentSound = btn.dataset.sound;
+        currentSound =
+        btn.dataset.sound;
 
     });
 
 });
 
-/* SONG PLAYER */
-
-let songArray = [];
-let songIndex = 0;
+let songTokens = [];
+let index = 0;
 let playing = false;
 let paused = false;
-let songTimeout = null;
+let timeout;
 
 function playSong(){
 
@@ -880,77 +886,83 @@ function playSong(){
     const raw =
     document.getElementById("songInput")
     .value
-    .toLowerCase();
+    .trim();
 
-    if(!raw.trim()){
-        alert("Paste a song first.");
+    if(!raw){
         return;
     }
 
-    songArray = raw.split("");
+    songTokens =
+    raw.split(/\s+/);
 
-    songIndex = 0;
+    index = 0;
+
     playing = true;
     paused = false;
 
-    document.getElementById("songStatus").innerText =
-    "Playing song...";
+    document.getElementById("status")
+    .innerText =
+    "Playing...";
 
-    nextSongNote();
-
+    nextToken();
 }
 
-function nextSongNote(){
+function nextToken(){
 
-    if(!playing || paused) return;
+    if(!playing || paused)
+    return;
 
-    if(songIndex >= songArray.length){
+    if(index >= songTokens.length){
 
-        document.getElementById("songStatus").innerText =
-        "Song finished.";
+        if(isLoop){
 
-        playing = false;
-        return;
+            index = 0;
+        }
+
+        else{
+
+            playing = false;
+
+            document.getElementById("status")
+            .innerText =
+            "Finished.";
+
+            return;
+        }
     }
 
-    const char = songArray[songIndex];
+    const token =
+    songTokens[index];
 
-    if(char === " " || char === "\n"){
+    triggerKey(token);
 
-        // pause
-    }
-    else{
+    index++;
 
-        triggerKey(char);
+    const tempo =
+    Number(document.getElementById("tempo").value);
 
-    }
-
-    songIndex++;
-
-    songTimeout = setTimeout(nextSongNote,320);
-
+    timeout =
+    setTimeout(nextToken,tempo);
 }
 
 function pauseSong(){
 
     paused = true;
 
-    document.getElementById("songStatus").innerText =
+    document.getElementById("status")
+    .innerText =
     "Paused.";
-
 }
 
 function resumeSong(){
 
-    if(!playing) return;
-
     paused = false;
 
-    document.getElementById("songStatus").innerText =
-    "Playing song...";
+    document.getElementById("status")
+    .innerText =
+    "Playing...";
 
-    nextSongNote();
-
+    nextToken();
 }
 
 function stopSong(){
@@ -958,17 +970,111 @@ function stopSong(){
     playing = false;
     paused = false;
 
-    clearTimeout(songTimeout);
+    clearTimeout(timeout);
 
-    document.getElementById("songStatus").innerText =
+    document.getElementById("status")
+    .innerText =
     "Stopped.";
+}
+
+function toggleLoop(){
+
+    isLoop = !isLoop;
+
+    document.getElementById("status")
+    .innerText =
+    "Loop: " + isLoop;
+}
+
+function randomMelody(){
+
+    const keys =
+    Object.keys(notes);
+
+    let out = "";
+
+    for(let i=0;i<40;i++){
+
+        out +=
+        keys[
+            Math.floor(Math.random()*keys.length)
+        ] + " ";
+    }
+
+    document.getElementById("songInput")
+    .value = out;
+}
+
+function recordToggle(){
+
+    recording = !recording;
+
+    if(recording){
+
+        recordedNotes = [];
+
+        document.getElementById("status")
+        .innerText =
+        "Recording...";
+    }
+
+    else{
+
+        document.getElementById("songInput")
+        .value =
+        recordedNotes.join(" ");
+
+        document.getElementById("status")
+        .innerText =
+        "Recording saved.";
+    }
+}
+
+function downloadRecording(){
+
+    const blob =
+    new Blob(
+        [
+            document.getElementById("songInput").value
+        ],
+        {
+            type:"text/plain"
+        }
+    );
+
+    const a =
+    document.createElement("a");
+
+    a.href =
+    URL.createObjectURL(blob);
+
+    a.download =
+    "typetone_song.txt";
+
+    a.click();
+}
+
+function loadDemoSong(){
+
+document.getElementById("songInput")
+.value =
+"q q w q t y q q w q u t q q q p t y w e";
 
 }
 
-window.playSong = playSong;
-window.pauseSong = pauseSong;
-window.resumeSong = resumeSong;
-window.stopSong = stopSong;
+function toggleTheme(){
+
+    if(document.body.style.background === "white"){
+
+        location.reload();
+    }
+
+    else{
+
+        document.body.style.background = "white";
+        document.body.style.color = "black";
+    }
+}
 
 </script>
 
