@@ -1,127 +1,409 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Optimized Typing Piano</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TypeTone Piano Studio</title>
 
 <style>
-    body{
-        margin:0;
-        background:#111;
-        color:white;
-        font-family:Arial, sans-serif;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        min-height:100vh;
+
+:root{
+    --bg:#090909;
+    --card:#151515;
+    --card2:#1e1e1e;
+    --accent:#00d2ff;
+    --accent2:#7c4dff;
+    --text:#ffffff;
+    --muted:#bdbdbd;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:
+    radial-gradient(circle at top left,#1a237e33,transparent 30%),
+    radial-gradient(circle at top right,#7c4dff22,transparent 30%),
+    linear-gradient(to bottom,#050505,#111);
+    color:white;
+    font-family:Inter,Arial,sans-serif;
+    min-height:100vh;
+    padding:30px 20px 80px;
+}
+
+.container{
+    max-width:1400px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    font-size:52px;
+    margin-bottom:10px;
+    letter-spacing:-2px;
+    background:linear-gradient(90deg,#fff,#8be9ff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.subtitle{
+    text-align:center;
+    color:var(--muted);
+    margin-bottom:40px;
+    font-size:18px;
+}
+
+.top-grid{
+    display:grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap:25px;
+    margin-bottom:30px;
+}
+
+.card{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:24px;
+    padding:25px;
+    backdrop-filter:blur(15px);
+    box-shadow:0 10px 40px rgba(0,0,0,0.4);
+}
+
+.card h2{
+    margin-bottom:18px;
+    font-size:26px;
+}
+
+.mapping{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:16px;
+}
+
+.map-box{
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:16px;
+    padding:18px;
+    line-height:1.7;
+}
+
+.map-box b{
+    color:#8be9ff;
+}
+
+.sound-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.sound-btn{
+    background:#1f1f1f;
+    color:white;
+    border:none;
+    padding:14px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:0.2s;
+    font-weight:600;
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.sound-btn:hover{
+    transform:translateY(-2px);
+    background:#2b2b2b;
+}
+
+.sound-btn.active{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.player-box{
+    margin-top:25px;
+}
+
+textarea{
+    width:100%;
+    height:160px;
+    background:#0f0f0f;
+    color:white;
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:18px;
+    padding:18px;
+    resize:none;
+    font-size:16px;
+    line-height:1.7;
+}
+
+.controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:15px;
+}
+
+.control-btn{
+    border:none;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:white;
+    padding:14px 22px;
+    border-radius:14px;
+    cursor:pointer;
+    font-weight:700;
+    transition:0.2s;
+}
+
+.control-btn:hover{
+    transform:translateY(-2px);
+}
+
+.control-btn.secondary{
+    background:#262626;
+}
+
+.status{
+    margin-top:15px;
+    color:#9ee8ff;
+    font-weight:600;
+}
+
+.piano-wrapper{
+    overflow-x:auto;
+    padding-bottom:20px;
+}
+
+.piano{
+    position:relative;
+    display:flex;
+    margin-top:35px;
+    width:max-content;
+}
+
+.white{
+    width:72px;
+    height:320px;
+    background:linear-gradient(to bottom,#ffffff,#ececec);
+    border:2px solid #222;
+    border-radius:0 0 14px 14px;
+    color:black;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:16px;
+    font-weight:700;
+    transition:0.08s;
+    position:relative;
+    user-select:none;
+    box-shadow:
+    inset 0 -5px 10px rgba(0,0,0,0.1),
+    0 5px 10px rgba(0,0,0,0.3);
+}
+
+.white.active{
+    background:linear-gradient(to bottom,#ffe082,#ffca28);
+    transform:translateY(5px);
+}
+
+.black{
+    width:48px;
+    height:190px;
+    background:linear-gradient(to bottom,#333,#000);
+    position:absolute;
+    z-index:10;
+    border-radius:0 0 10px 10px;
+    color:white;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:10px;
+    font-size:13px;
+    transition:0.08s;
+    user-select:none;
+    box-shadow:0 8px 10px rgba(0,0,0,0.6);
+}
+
+.black.active{
+    background:linear-gradient(to bottom,#ff9800,#ff5722);
+    transform:translateY(5px);
+}
+
+/* BLACK POSITIONS */
+.b1{ left:48px; }
+.b2{ left:120px; }
+.b3{ left:264px; }
+.b4{ left:336px; }
+.b5{ left:408px; }
+
+.b6{ left:552px; }
+.b7{ left:624px; }
+.b8{ left:768px; }
+.b9{ left:840px; }
+.b10{ left:912px; }
+
+.footer-note{
+    text-align:center;
+    margin-top:25px;
+    color:#aaa;
+}
+
+.now-playing{
+    margin-top:10px;
+    font-size:18px;
+    color:#8be9ff;
+    font-weight:700;
+}
+
+@media(max-width:1000px){
+
+    .top-grid{
+        grid-template-columns:1fr;
     }
 
     h1{
-        margin-top:20px;
+        font-size:40px;
     }
 
-    .info{
-        margin:20px;
-        text-align:center;
-        color:#ccc;
-        line-height:1.6;
-        max-width:1000px;
-    }
-
-    .piano{
-        position:relative;
-        display:flex;
-        margin-top:20px;
-    }
-
-    .white{
-        width:70px;
-        height:300px;
-        background:white;
-        border:2px solid #222;
-        border-radius:0 0 10px 10px;
-        color:black;
-        display:flex;
-        align-items:flex-end;
-        justify-content:center;
-        padding-bottom:12px;
-        font-weight:bold;
-        transition:0.08s;
-        position:relative;
-    }
-
-    .white.active{
-        background:#ffd54f;
-        transform:translateY(4px);
-    }
-
-    .black{
-        width:45px;
-        height:180px;
-        background:black;
-        position:absolute;
-        z-index:10;
-        border-radius:0 0 8px 8px;
-        color:white;
-        display:flex;
-        align-items:flex-end;
-        justify-content:center;
-        padding-bottom:10px;
-        font-size:13px;
-        transition:0.08s;
-    }
-
-    .black.active{
-        background:#ff9800;
-        transform:translateY(4px);
-    }
-
-    /* Black key positions */
-    .b1{ left:48px; }
-    .b2{ left:118px; }
-    .b3{ left:258px; }
-    .b4{ left:328px; }
-    .b5{ left:398px; }
-
-    .b6{ left:538px; }
-    .b7{ left:608px; }
-    .b8{ left:748px; }
-    .b9{ left:818px; }
-    .b10{ left:888px; }
+}
 
 </style>
 </head>
 
 <body>
 
-<h1>🎹 Optimized Typing Piano</h1>
+<div class="container">
 
-<div class="info">
+<h1>🎹 TypeTone Piano Studio</h1>
 
-<b>Original Layout Preserved</b><br><br>
-
-FIRST OCTAVE<br>
-Q W E R T Y U → C D E F G A B<br>
-1 2 3 4 5 → C# D# F# G# A#<br><br>
-
-SECOND OCTAVE<br>
-Z X C V B N M → C D E F G A B<br>
-A S D F G → C# D# F# G# A#<br><br>
-
-<b>Optimized Flow Keys</b><br>
-I O P → C5 D5 E5<br>
-H J K → F5 G5 A5<br>
-L → B5<br><br>
-
-6 7 8 9 0 → C#5 D#5 F#5 G#5 A#5<br>
-
-Now ascending notes can be played smoothly on the keyboard without jumping from U → Z.
+<div class="subtitle">
+Play piano naturally with your keyboard, choose different sounds, and auto-play songs using letters & numbers.
 </div>
+
+<div class="top-grid">
+
+    <!-- LEFT -->
+    <div class="card">
+
+        <h2>🎼 Key Mapping</h2>
+
+        <div class="mapping">
+
+            <div class="map-box">
+                <b>FIRST OCTAVE</b><br><br>
+
+                Q W E R T Y U → C D E F G A B<br>
+                1 2 3 4 5 → C# D# F# G# A#
+            </div>
+
+            <div class="map-box">
+                <b>SECOND OCTAVE</b><br><br>
+
+                Z X C V B N M → C D E F G A B<br>
+                A S D F G → C# D# F# G# A#
+            </div>
+
+            <div class="map-box">
+                <b>OPTIMIZED FLOW</b><br><br>
+
+                I O P → C5 D5 E5<br>
+                H J K → F5 G5 A5<br>
+                L → B5
+            </div>
+
+            <div class="map-box">
+                <b>SHARP NOTES</b><br><br>
+
+                6 7 8 9 0 → C#5 D#5 F#5 G#5 A#5
+            </div>
+
+        </div>
+
+        <div class="player-box">
+
+            <h2 style="margin-top:28px;">📜 Paste Song Letters</h2>
+
+            <textarea id="songInput" placeholder="Example:
+q w e r t y u
+u y t r e w q
+
+Spaces = pause between notes"></textarea>
+
+            <div class="controls">
+
+                <button class="control-btn" onclick="playSong()">
+                    ▶ Play
+                </button>
+
+                <button class="control-btn secondary" onclick="pauseSong()">
+                    ⏸ Pause
+                </button>
+
+                <button class="control-btn secondary" onclick="resumeSong()">
+                    ⏯ Continue
+                </button>
+
+                <button class="control-btn secondary" onclick="stopSong()">
+                    ⏹ Stop
+                </button>
+
+            </div>
+
+            <div class="status" id="songStatus">
+                Ready to play.
+            </div>
+
+            <div class="now-playing" id="currentNote">
+                Current Note: None
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="card">
+
+        <h2>🎵 Piano Sounds</h2>
+
+        <div class="sound-grid">
+
+            <button class="sound-btn active" data-sound="sine">Classic Piano</button>
+            <button class="sound-btn" data-sound="triangle">Soft Piano</button>
+            <button class="sound-btn" data-sound="square">Retro Piano</button>
+            <button class="sound-btn" data-sound="sawtooth">Electric Piano</button>
+
+            <button class="sound-btn" data-sound="bright">Bright Keys</button>
+            <button class="sound-btn" data-sound="warm">Warm Piano</button>
+            <button class="sound-btn" data-sound="dream">Dream Piano</button>
+            <button class="sound-btn" data-sound="organ">Organ</button>
+
+            <button class="sound-btn" data-sound="bell">Bell Piano</button>
+            <button class="sound-btn" data-sound="bass">Bass Piano</button>
+
+        </div>
+
+        <div style="margin-top:30px;color:#ccc;line-height:1.7;">
+
+            • Press keyboard keys to play instantly.<br><br>
+            • Mouse + touch supported.<br><br>
+            • Paste songs using letters & numbers.<br><br>
+            • Every space acts as a short pause.<br><br>
+            • Designed for ergonomic typing flow.
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="piano-wrapper">
 
 <div class="piano">
 
-    <!-- OCTAVE 1 WHITE -->
+    <!-- WHITE -->
     <div class="white" data-key="q">Q</div>
     <div class="white" data-key="w">W</div>
     <div class="white" data-key="e">E</div>
@@ -130,7 +412,6 @@ Now ascending notes can be played smoothly on the keyboard without jumping from 
     <div class="white" data-key="y">Y</div>
     <div class="white" data-key="u">U</div>
 
-    <!-- OCTAVE 2 WHITE -->
     <div class="white" data-key="z">Z / I</div>
     <div class="white" data-key="x">X / O</div>
     <div class="white" data-key="c">C / P</div>
@@ -139,14 +420,13 @@ Now ascending notes can be played smoothly on the keyboard without jumping from 
     <div class="white" data-key="n">N / K</div>
     <div class="white" data-key="m">M / L</div>
 
-    <!-- BLACK KEYS OCTAVE 1 -->
+    <!-- BLACK -->
     <div class="black b1" data-key="1">1</div>
     <div class="black b2" data-key="2">2</div>
     <div class="black b3" data-key="3">3</div>
     <div class="black b4" data-key="4">4</div>
     <div class="black b5" data-key="5">5</div>
 
-    <!-- BLACK KEYS OCTAVE 2 -->
     <div class="black b6" data-key="a">A / 6</div>
     <div class="black b7" data-key="s">S / 7</div>
     <div class="black b8" data-key="d">D / 8</div>
@@ -155,52 +435,22 @@ Now ascending notes can be played smoothly on the keyboard without jumping from 
 
 </div>
 
+</div>
+
+<div class="footer-note">
+Built for typists 🎹
+</div>
+
+</div>
+
 <script>
-function triggerKey(key){
 
-    if(notes[key]){
-        playSound(notes[key], key);
-    }
-}
-
-/* KEYBOARD PLAY */
-document.addEventListener("keydown",(e)=>{
-
-    const key = e.key.toLowerCase();
-
-    triggerKey(key);
-
-});
-
-/* MOUSE + TOUCH PLAY */
-document.querySelectorAll(".white, .black").forEach(keyElement => {
-
-    keyElement.addEventListener("mousedown", () => {
-
-        const key =
-            keyElement.getAttribute("data-key");
-
-        triggerKey(key);
-
-    });
-
-    keyElement.addEventListener("touchstart", (e) => {
-
-        e.preventDefault();
-
-        const key =
-            keyElement.getAttribute("data-key");
-
-        triggerKey(key);
-
-    });
-
-});
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+let currentSound = "sine";
 
 const notes = {
 
-    // OCTAVE 1
     q:261.63,
     "1":277.18,
     w:293.66,
@@ -214,7 +464,6 @@ const notes = {
     "5":466.16,
     u:493.88,
 
-    // OCTAVE 2 ORIGINAL
     z:523.25,
     a:554.37,
     x:587.33,
@@ -228,7 +477,6 @@ const notes = {
     g:932.33,
     m:987.77,
 
-    // OPTIMIZED DUPLICATES
     i:523.25,
     "6":554.37,
 
@@ -266,30 +514,104 @@ const visualMap = {
     "0":"g"
 };
 
-function playSound(freq, key){
+function getSoundType(sound){
+
+    switch(sound){
+
+        case "triangle":
+            return "triangle";
+
+        case "square":
+            return "square";
+
+        case "sawtooth":
+            return "sawtooth";
+
+        case "bright":
+            return "square";
+
+        case "warm":
+            return "triangle";
+
+        case "dream":
+            return "sine";
+
+        case "organ":
+            return "square";
+
+        case "bell":
+            return "triangle";
+
+        case "bass":
+            return "sawtooth";
+
+        default:
+            return "sine";
+    }
+}
+
+function playSound(freq,key){
 
     const osc = audioContext.createOscillator();
     const gain = audioContext.createGain();
 
-    osc.type = "sine";
+    osc.type = getSoundType(currentSound);
+
     osc.frequency.value = freq;
 
     osc.connect(gain);
     gain.connect(audioContext.destination);
 
-    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+    let volume = 0.25;
+    let decay = 1;
+
+    if(currentSound === "bright"){
+        volume = 0.35;
+        decay = 0.8;
+    }
+
+    if(currentSound === "warm"){
+        volume = 0.28;
+        decay = 1.5;
+    }
+
+    if(currentSound === "dream"){
+        volume = 0.2;
+        decay = 2;
+    }
+
+    if(currentSound === "bell"){
+        volume = 0.18;
+        decay = 2.5;
+    }
+
+    if(currentSound === "bass"){
+        volume = 0.4;
+        decay = 1.2;
+    }
+
+    gain.gain.setValueAtTime(volume,audioContext.currentTime);
+
     gain.gain.exponentialRampToValueAtTime(
         0.001,
-        audioContext.currentTime + 1
+        audioContext.currentTime + decay
     );
 
     osc.start();
-    osc.stop(audioContext.currentTime + 1);
+    osc.stop(audioContext.currentTime + decay);
+
+    animateKey(key);
+
+    document.getElementById("currentNote").innerText =
+    "Current Note: " + key.toUpperCase();
+}
+
+function animateKey(key){
 
     let visualKey = visualMap[key] || key;
 
     const keyElement =
-        document.querySelector(`[data-key="${visualKey}"]`);
+    document.querySelector(`[data-key="${visualKey}"]`);
 
     if(keyElement){
 
@@ -298,18 +620,168 @@ function playSound(freq, key){
         setTimeout(()=>{
             keyElement.classList.remove("active");
         },120);
+
     }
 }
 
+function triggerKey(key){
+
+    if(notes[key]){
+        playSound(notes[key],key);
+    }
+
+}
+
+/* KEYBOARD */
 document.addEventListener("keydown",(e)=>{
+
+    if(e.repeat) return;
 
     const key = e.key.toLowerCase();
 
-    if(notes[key]){
-        playSound(notes[key], key);
-    }
+    triggerKey(key);
 
 });
+
+/* MOUSE + TOUCH */
+document.querySelectorAll(".white,.black").forEach(keyElement=>{
+
+    keyElement.addEventListener("mousedown",()=>{
+
+        triggerKey(keyElement.dataset.key);
+
+    });
+
+    keyElement.addEventListener("touchstart",(e)=>{
+
+        e.preventDefault();
+
+        triggerKey(keyElement.dataset.key);
+
+    });
+
+});
+
+/* SOUND SELECT */
+document.querySelectorAll(".sound-btn").forEach(btn=>{
+
+    btn.addEventListener("click",()=>{
+
+        document.querySelectorAll(".sound-btn")
+        .forEach(b=>b.classList.remove("active"));
+
+        btn.classList.add("active");
+
+        currentSound = btn.dataset.sound;
+
+    });
+
+});
+
+/* SONG PLAYER */
+
+let songArray = [];
+let songIndex = 0;
+let playing = false;
+let paused = false;
+let songTimeout = null;
+
+function playSong(){
+
+    stopSong();
+
+    const raw =
+    document.getElementById("songInput")
+    .value
+    .toLowerCase();
+
+    if(!raw.trim()){
+        alert("Paste a song first.");
+        return;
+    }
+
+    songArray = raw.split("");
+
+    songIndex = 0;
+    playing = true;
+    paused = false;
+
+    document.getElementById("songStatus").innerText =
+    "Playing song...";
+
+    nextSongNote();
+
+}
+
+function nextSongNote(){
+
+    if(!playing || paused) return;
+
+    if(songIndex >= songArray.length){
+
+        document.getElementById("songStatus").innerText =
+        "Song finished.";
+
+        playing = false;
+        return;
+    }
+
+    const char = songArray[songIndex];
+
+    if(char === " " || char === "\n"){
+
+        // pause
+    }
+    else{
+
+        triggerKey(char);
+
+    }
+
+    songIndex++;
+
+    songTimeout = setTimeout(nextSongNote,320);
+
+}
+
+function pauseSong(){
+
+    paused = true;
+
+    document.getElementById("songStatus").innerText =
+    "Paused.";
+
+}
+
+function resumeSong(){
+
+    if(!playing) return;
+
+    paused = false;
+
+    document.getElementById("songStatus").innerText =
+    "Playing song...";
+
+    nextSongNote();
+
+}
+
+function stopSong(){
+
+    playing = false;
+    paused = false;
+
+    clearTimeout(songTimeout);
+
+    document.getElementById("songStatus").innerText =
+    "Stopped.";
+
+}
+
+window.playSong = playSong;
+window.pauseSong = pauseSong;
+window.resumeSong = resumeSong;
+window.stopSong = stopSong;
 
 </script>
 
