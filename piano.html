@@ -678,17 +678,136 @@ document.querySelectorAll(".sb").forEach(btn => {
     });
 });
 
-/* Song player */
-let songTokens = [], index = 0, playing = false, paused = false, timeout;
+/* ─────────────────────────────────────────
+   ADVANCED SONG PLAYER
+───────────────────────────────────────── */
+
+let songEvents = [];
+let index = 0;
+let playing = false;
+let paused = false;
+let timeout;
+
+function parseSong(raw) {
+
+    const events = [];
+    let current = "";
+
+    function pushCurrent(multiplier = 1) {
+        if (!current) return;
+
+        // very fast chained notes like 345 or 6/A
+        if (!current.includes("_") && current.length > 1) {
+
+            current.split("").forEach(ch => {
+                events.push({
+                    note: ch,
+                    gap: 0.32 * multiplier
+                });
+            });
+
+        } else {
+
+            events.push({
+                note: current,
+                gap: 1 * multiplier
+            });
+
+        }
+
+        current = "";
+    }
+
+    for (let i = 0; i < raw.length; i++) {
+
+        const ch = raw[i];
+
+        // spaces = pause amount
+        if (ch === " ") {
+
+            let count = 1;
+
+            while (raw[i + 1] === " ") {
+                count++;
+                i++;
+            }
+
+            pushCurrent(count);
+
+        }
+
+        // slash = ultra fast separator
+        else if (ch === "/") {
+
+            pushCurrent(0.18);
+
+        }
+
+        else if (ch === "\n" || ch === "\t") {
+
+            pushCurrent(2);
+
+        }
+
+        else {
+
+            current += ch;
+
+        }
+    }
+
+    pushCurrent();
+
+    return events;
+}
 
 function playSong() {
+
     stopSong();
-    const raw = document.getElementById("songInput").value.trim();
-    if (!raw) return;
-    songTokens = raw.split(/\s+/);
-    index = 0; playing = true; paused = false;
+
+    const raw = document.getElementById("songInput").value;
+
+    if (!raw.trim()) return;
+
+    songEvents = parseSong(raw);
+
+    index = 0;
+    playing = true;
+    paused = false;
+
     document.getElementById("status").innerText = "Playing...";
+
     nextToken();
+}
+
+function nextToken() {
+
+    if (!playing || paused) return;
+
+    if (index >= songEvents.length) {
+
+        if (isLoop) {
+
+            index = 0;
+
+        } else {
+
+            playing = false;
+            document.getElementById("status").innerText = "Finished.";
+            return;
+        }
+    }
+
+    const event = songEvents[index++];
+
+    triggerKey(event.note);
+
+    const tempo = Number(document.getElementById("tempo").value);
+
+    timeout = setTimeout(
+        nextToken,
+        tempo * event.gap
+    );
 }
 
 function nextToken() {
