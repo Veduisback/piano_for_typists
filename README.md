@@ -78,7 +78,7 @@ C + Eb + G
 
 Example melody:
 
-"3_5   4  2    3    3_5   4  2    1"
+3_5(3spaces)4(2spaces)2(4spaces)3(4spaces)3_5(3spaces)4(2spaces)2(4spaces)1
 
 ---
 
