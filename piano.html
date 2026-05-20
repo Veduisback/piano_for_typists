@@ -810,15 +810,7 @@ function nextToken() {
     );
 }
 
-function nextToken() {
-    if (!playing || paused) return;
-    if (index >= songTokens.length) {
-        if (isLoop) { index = 0; }
-        else { playing = false; document.getElementById("status").innerText = "Finished."; return; }
-    }
-    triggerKey(songTokens[index++]);
-    timeout = setTimeout(nextToken, Number(document.getElementById("tempo").value));
-}
+
 
 function pauseSong()  { paused = true; document.getElementById("status").innerText = "Paused."; }
 function resumeSong() { paused = false; document.getElementById("status").innerText = "Playing..."; nextToken(); }
