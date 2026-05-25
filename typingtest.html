@@ -68,6 +68,7 @@ nav{
     line-height:2.1;
     font-size:24px;
     min-height:220px;
+    user-select:none;
 }
 
 .correct{
@@ -148,7 +149,6 @@ button{
         TypeTone
     </div>
 
-    <!-- BUTTON KEPT INTACT -->
     <button class="back"
             onclick="window.location.href='dashboard.html'">
 
@@ -179,8 +179,7 @@ button{
 
     <textarea
         id="inputBox"
-        placeholder="Start typing here...">
-    </textarea>
+        placeholder="Start typing here..."></textarea>
 
     <div class="buttons">
 
@@ -242,12 +241,22 @@ let timerStarted = false;
 let timeLeft = 30;
 let timer;
 let correctChars = 0;
+let switchedPassage = false;
 
 const passageElement =
     document.getElementById('passage');
 
 const inputBox =
     document.getElementById('inputBox');
+
+document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('paste', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+inputBox.addEventListener('paste', e => e.preventDefault());
+inputBox.addEventListener('copy', e => e.preventDefault());
+inputBox.addEventListener('cut', e => e.preventDefault());
 
 function loadPassage(){
 
@@ -279,6 +288,52 @@ function loadPassage(){
 loadPassage();
 
 inputBox.addEventListener('input',()=>{
+
+    if(
+        !switchedPassage &&
+        inputBox.value.length === 1
+    ){
+
+        switchedPassage = true;
+
+        const current =
+            selectedPassage;
+
+        let newPassage = current;
+
+        while(newPassage === current){
+
+            newPassage =
+                passages[
+                    Math.floor(
+                        Math.random()*passages.length
+                    )
+                ];
+        }
+
+        selectedPassage = newPassage;
+
+        passageElement.innerHTML = "";
+
+        selectedPassage
+        .split("")
+        .forEach(char=>{
+
+            const span =
+                document.createElement('span');
+
+            span.innerText = char;
+
+            passageElement.appendChild(span);
+        });
+
+        passageElement.children[0]
+        .classList.add('current');
+
+        inputBox.value = "";
+
+        return;
+    }
 
     const typed =
         inputBox.value;
@@ -425,6 +480,8 @@ window.restartTest = function(){
     clearInterval(timer);
 
     timerStarted = false;
+
+    switchedPassage = false;
 
     timeLeft = 30;
 
