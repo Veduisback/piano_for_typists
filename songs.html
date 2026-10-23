@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Song Library - TypeTone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+    --bg:#050505;
+    --card:rgba(255,255,255,0.04);
+    --border:rgba(255,255,255,0.08);
+    --text:#ffffff;
+    --muted:#94a3b8;
+    --accent:#60a5fa;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+}
+.bg{position:fixed;inset:0;z-index:-1;}
+.orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:0.35;}
+.orb1{width:500px;height:500px;background:#2563eb;top:-150px;right:-120px;}
+.orb2{width:500px;height:500px;background:#7c3aed;bottom:-180px;left:-120px;}
+nav{
+    padding:22px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    background:rgba(0,0,0,0.5);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(255,255,255,0.05);
+    position:sticky;
+    top:0;
+}
+.logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800;color:white;text-decoration:none;}
+.logo-box{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#60a5fa,#8b5cf6);}
+.nav-links{display:flex;gap:10px;flex-wrap:wrap;}
+.nav-links a{
+    color:white;text-decoration:none;font-weight:600;
+    padding:12px 18px;border-radius:12px;background:rgba(255,255,255,0.06);
+}
+.container{width:90%;max-width:1100px;margin:auto;padding:50px 0 70px;}
+.title{font-size:48px;font-weight:800;margin-bottom:12px;}
+.subtitle{color:var(--muted);margin-bottom:32px;line-height:1.7;max-width:720px;}
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:28px;
+    padding:30px;
+    backdrop-filter:blur(20px);
+    margin-bottom:24px;
+}
+.section-title{font-size:24px;margin-bottom:8px;}
+.helper{color:var(--muted);line-height:1.7;margin-bottom:18px;}
+label{display:block;font-size:14px;color:var(--muted);margin:16px 0 8px;}
+input[type=text],textarea{
+    width:100%;
+    background:#0b0b0b;
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:18px;
+    padding:16px 18px;
+    color:white;
+    font-size:16px;
+    line-height:1.7;
+    outline:none;
+    font-family:inherit;
+}
+textarea{min-height:180px;resize:vertical;font-family:ui-monospace,monospace;}
+input[type=text]:focus,textarea:focus{
+    border-color:#60a5fa;
+    box-shadow:0 0 25px rgba(96,165,250,0.25);
+}
+.file-row{
+    margin-top:16px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    align-items:center;
+}
+input[type=file]{color:var(--muted);max-width:100%;}
+.buttons{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;}
+button,a.btn{
+    padding:14px 22px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-block;
+    font-family:inherit;
+    font-size:15px;
+}
+button.ghost,a.ghost{
+    background:rgba(255,255,255,0.06);
+}
+button:disabled{opacity:0.55;cursor:wait;}
+.status{margin-top:16px;color:#93c5fd;line-height:1.6;min-height:1.6em;}
+.status.bad{color:#fda4af;}
+.map{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;
+}
+.map span{
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:10px;
+    padding:8px 10px;
+    color:var(--muted);
+    font-size:13px;
+}
+.song{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    align-items:center;
+    padding:16px 0;
+    border-top:1px solid rgba(255,255,255,0.06);
+}
+.song h3{font-size:18px;margin-bottom:4px;}
+.song p{
+    color:var(--muted);
+    font-family:ui-monospace,monospace;
+    white-space:pre-wrap;
+    word-break:break-word;
+}
+.song-actions{display:flex;gap:8px;flex-shrink:0;}
+.empty{color:var(--muted);padding-top:8px;}
+@media(max-width:720px){
+    .title{font-size:34px;}
+    .song{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+<div class="bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+</div>
+<nav>
+    <a class="logo" href="dashboard.html">
+        <span class="logo-box"></span>
+        TypeTone
+    </a>
+    <div class="nav-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="piano.html">Piano</a>
+    </div>
+</nav>
+<main class="container">
+    <h1 class="title">Song library</h1>
+    <p class="subtitle">
+        Write a song or upload a text file. Saving it puts the song in the piano menu, where the falling tiles use the same keys.
+    </p>
+
+    <section class="card">
+        <h2 class="section-title">Add a song</h2>
+        <p class="helper">
+            Use the piano letters. Spaces pause, <b>_</b> plays a chord, and a new line holds a little longer.
+            Example: <b>q w e r t</b> or <b>q_e_t</b>.
+        </p>
+        <div class="map">
+            <span>Q W E R T Y U → C D E F G A B</span>
+            <span>1 2 3 4 5 → C# D# F# G# A#</span>
+            <span>Z X C V B N M → octave 2</span>
+            <span>A S D F G → octave 2 sharps</span>
+            <span>I O P H J K L and 6 7 8 9 0 → octave 3</span>
+        </div>
+
+        <label for="title">Song title</label>
+        <input id="title" type="text" maxlength="80" placeholder="Twinkle" autocomplete="off">
+
+        <label for="notation">Notation</label>
+        <textarea id="notation" placeholder="q q w q t y&#10;q_e_t"></textarea>
+        <p class="helper" id="check"></p>
+
+        <div class="file-row">
+            <input id="file" type="file" accept=".txt,.md,text/plain">
+            <span class="helper" style="margin:0;">A text file fills the notation box. Its name becomes the title when the title is empty.</span>
+        </div>
+
+        <div class="buttons">
+            <button id="saveBtn" type="button">Save to library</button>
+            <button id="exampleBtn" class="ghost" type="button">Use example</button>
+            <button id="clearBtn" class="ghost" type="button">Clear</button>
+        </div>
+        <div class="status" id="status" role="status"></div>
+    </section>
+
+    <section class="card">
+        <h2 class="section-title">Saved songs</h2>
+        <p class="helper">These are the songs the piano menu loads.</p>
+        <div id="list"><p class="empty">Loading…</p></div>
+    </section>
+</main>
+
+<script type="module">
+import { db } from "./firebase.js";
+import {
+    addDoc,
+    arrayUnion,
+    collection,
+    deleteDoc,
+    doc,
+    getDoc,
+    getDocs,
+    serverTimestamp,
+    updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const mapped = /[qwertyuiopasdfghjklzxcvbnm0-9]/;
+const syntax = /[\s_\/]/;
+
+const titleInput = document.getElementById("title");
+const notationInput = document.getElementById("notation");
+const statusEl = document.getElementById("status");
+const listEl = document.getElementById("list");
+const saveBtn = document.getElementById("saveBtn");
+
+function currentUser() {
+    try {
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        return user && typeof user === "object" ? user : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+function normalizeNotation(raw) {
+    return String(raw || "").replace(/\r/g, "").toLowerCase();
+}
+
+function setStatus(message, bad) {
+    statusEl.textContent = message;
+    statusEl.classList.toggle("bad", !!bad);
+}
+
+function unknownCharacters(notation) {
+    const seen = new Set();
+    for (const ch of notation) {
+        if (mapped.test(ch) || syntax.test(ch)) continue;
+        seen.add(ch);
+    }
+    return [...seen];
+}
+
+function refreshCheck() {
+    const notation = normalizeNotation(notationInput.value);
+    const check = document.getElementById("check");
+    if (!notation.trim()) {
+        check.textContent = "";
+        return;
+    }
+    const unknown = unknownCharacters(notation);
+    if (!mapped.test(notation)) {
+        check.textContent = "Add at least one piano key, such as q, w, or e.";
+        return;
+    }
+    check.textContent = unknown.length
+        ? "These characters are not piano keys and will be skipped: " + unknown.join(" ")
+        : "Every character maps to a key, a pause, or a chord.";
+}
+
+titleInput.addEventListener("input", refreshCheck);
+notationInput.addEventListener("input", refreshCheck);
+
+document.getElementById("file").addEventListener("change", () => {
+    const file = document.getElementById("file").files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        notationInput.value = String(reader.result || "");
+        if (!titleInput.value.trim()) {
+            titleInput.value = file.name.replace(/\.[^.]+$/, "").slice(0, 80);
+        }
+        refreshCheck();
+        setStatus("Loaded " + file.name + ". Save it to add it to the piano.", false);
+    };
+    reader.onerror = () => setStatus("Could not read that file.", true);
+    reader.readAsText(file);
+});
+
+document.getElementById("exampleBtn").addEventListener("click", () => {
+    if (!titleInput.value.trim()) titleInput.value = "Example melody";
+    notationInput.value = "q q w q t y\nq_e_t 1 i 6";
+    refreshCheck();
+});
+
+document.getElementById("clearBtn").addEventListener("click", () => {
+    titleInput.value = "";
+    notationInput.value = "";
+    document.getElementById("file").value = "";
+    refreshCheck();
+    setStatus("", false);
+});
+
+function songFromDoc(id, data) {
+    const notation = data && typeof data.notation === "string" ? data.notation.trim() : "";
+    if (!notation) return null;
+    return {
+        id: id,
+        title: String((data && data.title) || "Untitled"),
+        notation: notation
+    };
+}
+
+function renderSongList(songs) {
+    listEl.textContent = "";
+    if (!songs.length) {
+        const empty = document.createElement("p");
+        empty.className = "empty";
+        empty.textContent = currentUser()
+            ? "No songs yet. Write one above and save it."
+            : "Log in from the home page. Songs are saved to your account and show up in the piano menu.";
+        listEl.appendChild(empty);
+        return;
+    }
+    songs.forEach(song => {
+        const row = document.createElement("div");
+        row.className = "song";
+        const copy = document.createElement("div");
+        const heading = document.createElement("h3");
+        heading.textContent = song.title;
+        const preview = document.createElement("p");
+        preview.textContent = song.notation.length > 180
+            ? song.notation.slice(0, 180) + "…"
+            : song.notation;
+        copy.appendChild(heading);
+        copy.appendChild(preview);
+
+        const actions = document.createElement("div");
+        actions.className = "song-actions";
+        const play = document.createElement("a");
+        play.className = "btn";
+        play.href = "piano.html?song=" + encodeURIComponent(song.playId);
+        play.textContent = "Play";
+        const remove = document.createElement("button");
+        remove.className = "ghost";
+        remove.type = "button";
+        remove.textContent = "Delete";
+        remove.addEventListener("click", () => removeSong(song));
+        actions.appendChild(play);
+        actions.appendChild(remove);
+        row.appendChild(copy);
+        row.appendChild(actions);
+        listEl.appendChild(row);
+    });
+}
+
+async function loadSongs() {
+    const songs = [];
+    const seen = new Set();
+    try {
+        const snap = await getDocs(collection(db, "songs"));
+        snap.forEach(item => {
+            const song = songFromDoc(item.id, item.data());
+            if (!song || seen.has(song.id)) return;
+            seen.add(song.id);
+            songs.push({ ...song, playId: song.id, source: "library" });
+        });
+    } catch (error) {
+        console.warn(error);
+    }
+    const user = currentUser();
+    if (user && user.uid) {
+        try {
+            const snap = await getDoc(doc(db, "users", user.uid));
+            const list = snap.exists() && Array.isArray(snap.data().songs) ? snap.data().songs : [];
+            list.forEach((entry, index) => {
+                if (!entry || typeof entry.notation !== "string" || !entry.notation.trim()) return;
+                const id = entry.id || ("legacy-" + index);
+                if (seen.has(id)) return;
+                seen.add(id);
+                songs.push({
+                    id: id,
+                    playId: id,
+                    title: String(entry.title || "Untitled"),
+                    notation: entry.notation,
+                    source: "account",
+                    raw: entry
+                });
+            });
+        } catch (error) {
+            console.warn(error);
+            const failed = document.createElement("p");
+            failed.className = "empty";
+            failed.textContent = "Couldn't load your songs. Log in again from the home page.";
+            listEl.textContent = "";
+            listEl.appendChild(failed);
+            return;
+        }
+    }
+    songs.sort((a, b) => a.title.localeCompare(b.title));
+    renderSongList(songs);
+}
+
+async function removeSong(song) {
+    if (!confirm("Delete \"" + song.title + "\" from the piano library?")) return;
+    try {
+        if (song.source === "library") {
+            await deleteDoc(doc(db, "songs", song.id));
+        } else {
+            const user = currentUser();
+            if (!user || !user.uid) throw new Error("Log in again to delete this song.");
+            const snap = await getDoc(doc(db, "users", user.uid));
+            const list = snap.exists() && Array.isArray(snap.data().songs) ? snap.data().songs : [];
+            await updateDoc(doc(db, "users", user.uid), {
+                songs: list.filter(entry => entry && entry.id !== song.id)
+            });
+        }
+        setStatus("Deleted " + song.title + ".", false);
+        await loadSongs();
+    } catch (error) {
+        console.warn(error);
+        setStatus("Couldn't delete that song. " + (error && error.message ? error.message : ""), true);
+    }
+}
+
+async function saveToAccount(title, notation) {
+    const user = currentUser();
+    if (!user || !user.uid) {
+        const error = new Error("Log in from the home page first. Songs are saved to your account, then they show up in the piano menu.");
+        error.code = "signed-out";
+        throw error;
+    }
+    const entry = {
+        id: crypto.randomUUID(),
+        title: title,
+        notation: notation,
+        createdAt: Date.now()
+    };
+    await updateDoc(doc(db, "users", user.uid), {
+        songs: arrayUnion(entry)
+    });
+    return entry;
+}
+
+saveBtn.addEventListener("click", async () => {
+    const title = titleInput.value.trim();
+    const notation = normalizeNotation(notationInput.value).trim();
+    if (!title) {
+        setStatus("Add a title.", true);
+        titleInput.focus();
+        return;
+    }
+    if (!notation || !mapped.test(notation)) {
+        setStatus("Add piano keys such as q w e before saving.", true);
+        notationInput.focus();
+        return;
+    }
+    const user = currentUser();
+    saveBtn.disabled = true;
+    setStatus("Saving…", false);
+    try {
+        let playId = "";
+        try {
+            const created = await addDoc(collection(db, "songs"), {
+                title: title,
+                notation: notation,
+                createdAt: serverTimestamp(),
+                authorUid: user && user.uid ? user.uid : "",
+                authorName: user && user.name ? user.name : ""
+            });
+            playId = created.id;
+        } catch (error) {
+            if (!error || error.code !== "permission-denied") throw error;
+            const entry = await saveToAccount(title, notation);
+            playId = entry.id;
+        }
+        setStatus("Saved. It is in the piano song menu.", false);
+        titleInput.value = "";
+        notationInput.value = "";
+        document.getElementById("file").value = "";
+        refreshCheck();
+        await loadSongs();
+        const play = document.createElement("a");
+        play.href = "piano.html?song=" + encodeURIComponent(playId);
+        play.textContent = " Open it on the piano.";
+        play.style.color = "#93c5fd";
+        statusEl.appendChild(play);
+    } catch (error) {
+        console.warn(error);
+        setStatus("Couldn't save the song. " + (error && error.message ? error.message : "Try again in a moment."), true);
+    } finally {
+        saveBtn.disabled = false;
+    }
+});
+
+loadSongs();
+</script>
+</body>
+</html>

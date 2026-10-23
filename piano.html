@@ -233,9 +233,81 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
     transform:translateY(3px);color:rgba(255,255,255,0.9);
     box-shadow:inset 0 -1px 0 rgba(0,0,0,0.2),0 0 18px rgba(255,51,102,0.55),0 0 36px rgba(255,51,102,0.25);
 }
+.white.due,.black.due{outline:2px solid var(--cyan);outline-offset:-3px;}
 /* black key positions — 60px keys + 2px gap = 62px per slot, 20px padding */
 .b1{left:62px;}.b2{left:124px;}.b3{left:248px;}.b4{left:310px;}.b5{left:372px;}
 .b6{left:496px;}.b7{left:558px;}.b8{left:682px;}.b9{left:744px;}.b10{left:806px;}
+
+/* ── Song picker + falling tiles ── */
+.song-pick{display:flex;flex-wrap:wrap;gap:7px;align-items:center;}
+.song-pick select{
+    flex:1 1 220px;min-width:0;background:rgba(0,0,0,0.28);
+    border:1px solid var(--border);border-radius:12px;
+    padding:11px 14px;color:var(--text);
+    font-family:'IBM Plex Mono',monospace;font-size:0.78rem;
+    outline:none;cursor:pointer;
+}
+.song-pick select:focus{border-color:rgba(0,212,255,0.35);}
+.song-hint{
+    margin-top:10px;color:var(--muted);
+    font-family:'IBM Plex Mono',monospace;font-size:0.62rem;line-height:1.7;
+}
+.tile-stats{
+    display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.66rem;
+    letter-spacing:0.08em;text-transform:uppercase;color:var(--mid);
+}
+.tile-stats b{color:var(--cyan);font-weight:500;margin-left:6px;}
+.stage{width:max-content;margin:auto;}
+.highway{
+    display:none;position:relative;height:320px;margin:0 auto 8px;
+    overflow:hidden;border-radius:12px 12px 0 0;
+    background:linear-gradient(180deg,rgba(0,212,255,0.03),rgba(0,212,255,0.1));
+    border:1px solid rgba(255,255,255,0.05);border-bottom:none;
+}
+.highway.on{display:block;animation:tileIn 0.25s ease;}
+@keyframes tileIn{from{opacity:0}to{opacity:1}}
+.hit-zone{
+    position:absolute;left:0;right:0;bottom:0;height:36px;z-index:0;pointer-events:none;
+    background:linear-gradient(180deg,transparent,rgba(0,212,255,0.16));
+}
+.hit-line{
+    position:absolute;left:8px;right:8px;bottom:0;height:3px;z-index:2;pointer-events:none;
+    background:linear-gradient(90deg,transparent,var(--cyan),var(--purple),transparent);
+    box-shadow:0 0 12px rgba(0,212,255,0.65);
+}
+.lane{
+    position:absolute;top:0;bottom:0;width:1px;z-index:1;pointer-events:none;
+    background:rgba(0,212,255,0.14);transform:translateX(-50%);
+}
+.lane-black{background:rgba(255,51,102,0.2);}
+.tile{
+    position:absolute;top:0;width:44px;height:34px;z-index:3;pointer-events:none;
+    display:flex;align-items:center;justify-content:center;
+    transform:translateX(-50%);
+    font-family:'IBM Plex Mono',monospace;font-size:0.95rem;font-weight:500;
+    color:#041820;border-radius:8px;user-select:none;
+    background:linear-gradient(180deg,#e7fbff 0%,#7ae4ff 100%);
+    border:1px solid rgba(0,212,255,0.9);
+    box-shadow:0 8px 16px rgba(0,0,0,0.35),0 0 14px rgba(0,212,255,0.35);
+}
+.tile.sharp{
+    width:36px;z-index:4;color:#fff;
+    background:linear-gradient(180deg,#ff7b98 0%,#ff3366 100%);
+    border-color:rgba(255,51,102,0.95);
+    box-shadow:0 8px 16px rgba(0,0,0,0.4),0 0 14px rgba(255,51,102,0.4);
+}
+.tile.hit{
+    background:linear-gradient(180deg,#f4fff8 0%,#8dffb8 100%);
+    border-color:#7dffb0;color:#04210f;
+    box-shadow:0 0 20px rgba(125,255,176,0.75);
+}
+.tile.miss{opacity:0.28;filter:grayscale(0.5);}
+body.light .highway{
+    background:linear-gradient(180deg,rgba(0,80,110,0.03),rgba(0,90,120,0.1));
+    border-color:rgba(0,0,0,0.06);
+}
+body.light .tile{color:#06202a;}
 
 /* ── Footer ── */
 .ft{text-align:center;margin-top:30px;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.1em;}
@@ -298,7 +370,22 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 </div>
 
 <div class="hr"></div>
-<div class="sec">Song Player</div>
+<div class="sec">Select your song</div>
+<div class="song-pick">
+    <select id="songSelect" aria-label="Select your song to play" autocomplete="off"></select>
+    <button class="bs" onclick="replayTiles()">↻ Replay</button>
+    <button class="bs" onclick="stopTiles()">■ Stop</button>
+    <button class="bs" onclick="reloadSongLibrary()">⟳ Library</button>
+    <button class="bs" onclick="window.location.href='songs.html'">＋ Songs</button>
+</div>
+<p class="song-hint">Tiles fall onto the key you need. Type the letter on the tile — the same map already printed on the piano, including second-octave aliases such as I for the Z key and 6 for the A key. Chords joined with _ arrive together.</p>
+<div class="tile-stats">
+    <span>Hits<b id="tileHits">0</b></span>
+    <span>Misses<b id="tileMisses">0</b></span>
+    <span>Combo<b id="tileCombo">0</b></span>
+</div>
+
+<div class="sec" style="margin-top:18px;">Song Player</div>
 
 <textarea id="songInput" placeholder="q w e r t y u
 q_e_t  z_c_b
@@ -432,6 +519,7 @@ _ = chord    spaces = pause"></textarea>
     <span class="ftag">Record & save</span>
     <span class="ftag">Loop mode</span>
     <span class="ftag">Random melody</span>
+    <span class="ftag">Falling letter tiles</span>
     <span class="ftag">Mobile ready</span>
 </div>
 
@@ -444,7 +532,12 @@ _ = chord    spaces = pause"></textarea>
 <div class="card">
 <div class="sec">Piano Keyboard</div>
 <div class="piano-wrap">
-<div class="piano">
+<div class="stage">
+<div class="highway" id="highway" aria-hidden="true">
+    <div class="hit-zone"></div>
+    <div class="hit-line"></div>
+</div>
+<div class="piano" id="piano">
     <div class="white" data-key="q">Q</div>
     <div class="white" data-key="w">W</div>
     <div class="white" data-key="e">E</div>
@@ -469,6 +562,7 @@ _ = chord    spaces = pause"></textarea>
     <div class="black b8"  data-key="d">D/8</div>
     <div class="black b9"  data-key="f">F/9</div>
     <div class="black b10" data-key="g">G/0</div>
+</div>
 </div>
 </div>
 </div>
@@ -664,10 +758,22 @@ function updateHistory(key) {
     h.scrollTop = h.scrollHeight;
 }
 
-document.addEventListener("keydown", e => { if (!e.repeat) triggerKey(e.key.toLowerCase()); });
+document.addEventListener("keydown", e => {
+    if (e.repeat) return;
+    const tag = e.target && e.target.tagName;
+    if (tag === "TEXTAREA" || tag === "INPUT" || tag === "SELECT") return;
+    if (audioContext.state === "suspended") audioContext.resume();
+    const key = e.key.toLowerCase();
+    judgeTile(key);
+    triggerKey(key);
+});
 
 document.querySelectorAll(".white,.black").forEach(el => {
-    el.addEventListener("mousedown", () => triggerKey(el.dataset.key));
+    el.addEventListener("mousedown", () => {
+        if (audioContext.state === "suspended") audioContext.resume();
+        judgeTile(el.dataset.key);
+        triggerKey(el.dataset.key);
+    });
 });
 
 document.querySelectorAll(".sb").forEach(btn => {
@@ -761,9 +867,16 @@ function parseSong(raw) {
     return events;
 }
 
+function haltAutoplay() {
+    playing = false;
+    paused = false;
+    clearTimeout(timeout);
+}
+
 function playSong() {
 
-    stopSong();
+    haltAutoplay();
+    stopTiles({ silent: true });
 
     const raw = document.getElementById("songInput").value;
 
@@ -814,7 +927,11 @@ function nextToken() {
 
 function pauseSong()  { paused = true; document.getElementById("status").innerText = "Paused."; }
 function resumeSong() { paused = false; document.getElementById("status").innerText = "Playing..."; nextToken(); }
-function stopSong()   { playing = false; paused = false; clearTimeout(timeout); document.getElementById("status").innerText = "Stopped."; }
+function stopSong()   {
+    haltAutoplay();
+    stopTiles({ silent: true });
+    document.getElementById("status").innerText = "Stopped.";
+}
 
 function toggleLoop() {
     isLoop = !isLoop;
@@ -858,6 +975,468 @@ function loadDemoSong() {
 function toggleTheme() {
     document.body.classList.toggle("light");
 }
+
+/* ─────────────────────────────────────────
+   FALLING TILES
+   Positions follow visualMap. Letters are the
+   keys already defined in `notes`.
+───────────────────────────────────────── */
+const TILE_TRAVEL_MS = 1900;
+const TILE_HIT_MS = 170;
+const TILE_H = 34;
+
+const BUILTIN_SONGS = [
+    {
+        id: "local-demo",
+        title: "Demo melody",
+        notation: "q q w q t y q q w q u t q q q p t y w e",
+        source: "built-in"
+    }
+];
+
+let songLibrary = [];
+let tileRun = null;
+let laneAnchors = [];
+
+function normalizeNotation(raw) {
+    return String(raw == null ? "" : raw).replace(/\r/g, "").toLowerCase();
+}
+
+function selectedSong() {
+    const sel = document.getElementById("songSelect");
+    if (!sel || sel.value === "") return null;
+    return songLibrary[Number(sel.value)] || null;
+}
+
+function populateSongMenu(remote) {
+    const sel = document.getElementById("songSelect");
+    const previous = selectedSong();
+    const uploaded = remote || [];
+    songLibrary = BUILTIN_SONGS.concat(uploaded);
+    sel.innerHTML = "";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Select your song to play";
+    sel.appendChild(placeholder);
+
+    songLibrary.forEach((song, index) => {
+        const opt = document.createElement("option");
+        opt.value = String(index);
+        opt.textContent = song.source === "built-in" ? song.title + " (built in)" : song.title;
+        sel.appendChild(opt);
+    });
+
+    if (!remote) {
+        const waiting = document.createElement("option");
+        waiting.disabled = true;
+        waiting.textContent = "Loading library…";
+        sel.appendChild(waiting);
+    } else if (!uploaded.length) {
+        const empty = document.createElement("option");
+        empty.disabled = true;
+        empty.textContent = loggedInUid() ? "No uploaded songs yet" : "Log in to load your songs";
+        sel.appendChild(empty);
+    }
+
+    const wanted = remote ? new URLSearchParams(location.search).get("song") : "";
+    const queryIdx = wanted
+        ? songLibrary.findIndex(song => song.id === "songs/" + wanted || song.id.endsWith("/" + wanted))
+        : -1;
+    if (queryIdx >= 0 && !window.__openedSongQuery) {
+        window.__openedSongQuery = true;
+        sel.value = String(queryIdx);
+        sel.dispatchEvent(new Event("change"));
+    } else if (previous) {
+        const idx = songLibrary.findIndex(song => song.id === previous.id);
+        if (idx >= 0) sel.value = String(idx);
+    }
+}
+
+function renderTileStats() {
+    const hits = tileRun ? tileRun.hits : 0;
+    const misses = tileRun ? tileRun.misses : 0;
+    const combo = tileRun ? tileRun.combo : 0;
+    document.getElementById("tileHits").textContent = String(hits);
+    document.getElementById("tileMisses").textContent = String(misses);
+    document.getElementById("tileCombo").textContent = String(combo);
+}
+
+function keyElement(key) {
+    const visual = visualMap[key] || key;
+    return document.querySelector('#piano [data-key="' + visual + '"]');
+}
+
+function layoutLanes() {
+    const piano = document.getElementById("piano");
+    const highway = document.getElementById("highway");
+    highway.style.width = piano.offsetWidth + "px";
+    highway.querySelectorAll(".lane").forEach(node => node.remove());
+    laneAnchors = [];
+    piano.querySelectorAll(".white, .black").forEach(key => {
+        const lane = document.createElement("div");
+        lane.className = "lane" + (key.classList.contains("black") ? " lane-black" : "");
+        highway.appendChild(lane);
+        laneAnchors.push({ key: key, lane: lane });
+    });
+    positionLanes();
+}
+
+function positionLanes() {
+    const piano = document.getElementById("piano");
+    const highway = document.getElementById("highway");
+    highway.style.width = piano.offsetWidth + "px";
+    laneAnchors.forEach(item => {
+        item.lane.style.left = (item.key.offsetLeft + item.key.offsetWidth / 2) + "px";
+    });
+}
+
+function chartTiles(raw) {
+    const events = parseSong(normalizeNotation(raw));
+    const tempo = Number(document.getElementById("tempo").value) || 320;
+    let cursor = TILE_TRAVEL_MS;
+    const tiles = [];
+    events.forEach(event => {
+        String(event.note).split("_").forEach(part => {
+            const key = part.trim();
+            if (!notes[key]) return;
+            const anchor = keyElement(key);
+            if (!anchor) return;
+            tiles.push({
+                key: key,
+                anchor: anchor,
+                hitAt: cursor,
+                state: "live",
+                el: null,
+                nudge: 0
+            });
+        });
+        cursor += tempo * event.gap;
+    });
+    const groups = new Map();
+    tiles.forEach(tile => {
+        const lane = visualMap[tile.key] || tile.key;
+        const id = tile.hitAt + "|" + lane;
+        if (!groups.has(id)) groups.set(id, []);
+        groups.get(id).push(tile);
+    });
+    groups.forEach(group => {
+        group.forEach((tile, index) => {
+            tile.nudge = (index - (group.length - 1) / 2) * 20;
+        });
+    });
+    return { tiles: tiles, endAt: cursor };
+}
+
+function clearDueKeys() {
+    document.querySelectorAll("#piano .due").forEach(el => el.classList.remove("due"));
+}
+
+function startTiles(raw, title, opts) {
+    haltAutoplay();
+    if (tileRun && tileRun.raf) cancelAnimationFrame(tileRun.raf);
+    clearDueKeys();
+
+    const highway = document.getElementById("highway");
+    highway.querySelectorAll(".tile").forEach(el => el.remove());
+
+    const chart = chartTiles(raw);
+    if (!chart.tiles.length) {
+        highway.classList.remove("on");
+        highway.setAttribute("aria-hidden", "true");
+        tileRun = null;
+        document.getElementById("status").innerText = "That song has no mapped keys.";
+        return;
+    }
+
+    highway.classList.add("on");
+    highway.setAttribute("aria-hidden", "false");
+    layoutLanes();
+
+    chart.tiles.forEach(tile => {
+        const el = document.createElement("div");
+        el.className = "tile" + (tile.anchor.classList.contains("black") ? " sharp" : "");
+        el.textContent = tile.key.toUpperCase();
+        el.style.visibility = "hidden";
+        highway.appendChild(el);
+        tile.el = el;
+    });
+
+    tileRun = {
+        active: true,
+        title: title || "Song",
+        notation: raw,
+        tiles: chart.tiles,
+        endAt: chart.endAt,
+        started: performance.now(),
+        hits: 0,
+        misses: 0,
+        combo: 0,
+        raf: 0
+    };
+    renderTileStats();
+    document.getElementById("status").innerText = "Tiles · " + tileRun.title + " · type each letter as it reaches the key";
+    if (!opts || !opts.keepScroll) {
+        document.getElementById("piano").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    tileRun.raf = requestAnimationFrame(tileFrame);
+}
+
+function tileFrame() {
+    if (!tileRun || !tileRun.active) return;
+    const highway = document.getElementById("highway");
+    positionLanes();
+    const elapsed = performance.now() - tileRun.started;
+    const laneH = Math.max(highway.clientHeight - TILE_H, 1);
+    const dueKeys = new Set();
+
+    tileRun.tiles.forEach(tile => {
+        if (tile.state === "gone") return;
+        const progress = 1 - (tile.hitAt - elapsed) / TILE_TRAVEL_MS;
+        tile.el.style.left = (tile.anchor.offsetLeft + tile.anchor.offsetWidth / 2 + tile.nudge) + "px";
+        if (progress < 0) {
+            tile.el.style.visibility = "hidden";
+            return;
+        }
+        tile.el.style.visibility = "visible";
+        if (tile.state === "hit") {
+            tile.el.style.top = laneH + "px";
+            return;
+        }
+        tile.el.style.top = (progress * laneH) + "px";
+        if (tile.state === "live" && Math.abs(tile.hitAt - elapsed) <= TILE_HIT_MS) {
+            dueKeys.add(tile.anchor);
+        }
+        if (tile.state === "live" && elapsed > tile.hitAt + TILE_HIT_MS) {
+            tile.state = "miss";
+            tile.el.classList.add("miss");
+            tileRun.misses += 1;
+            tileRun.combo = 0;
+            renderTileStats();
+            const el = tile.el;
+            const missed = tile;
+            setTimeout(() => {
+                missed.state = "gone";
+                if (el.isConnected) el.remove();
+            }, 320);
+        }
+    });
+
+    clearDueKeys();
+    dueKeys.forEach(el => el.classList.add("due"));
+
+    const pending = tileRun.tiles.some(tile => tile.state === "live");
+    if (!pending && elapsed > tileRun.endAt) {
+        clearDueKeys();
+        if (isLoop) {
+            const notation = tileRun.notation;
+            const title = tileRun.title;
+            startTiles(notation, title, { keepScroll: true });
+            return;
+        }
+        tileRun.active = false;
+        document.getElementById("status").innerText =
+            "Finished " + tileRun.title + " · " + tileRun.hits + " hits · " + tileRun.misses + " misses";
+        return;
+    }
+
+    tileRun.raf = requestAnimationFrame(tileFrame);
+}
+
+function judgeTile(key) {
+    if (!tileRun || !tileRun.active || !notes[key]) return;
+    const elapsed = performance.now() - tileRun.started;
+    let best = null;
+    let bestDist = Infinity;
+    tileRun.tiles.forEach(tile => {
+        if (tile.state !== "live" || tile.key !== key) return;
+        const dist = Math.abs(tile.hitAt - elapsed);
+        if (dist < bestDist) {
+            best = tile;
+            bestDist = dist;
+        }
+    });
+    if (!best || bestDist > TILE_HIT_MS) return;
+    best.state = "hit";
+    best.el.classList.add("hit");
+    tileRun.hits += 1;
+    tileRun.combo += 1;
+    renderTileStats();
+    document.getElementById("status").innerText = "Hit " + best.key.toUpperCase() + " · combo " + tileRun.combo;
+    const el = best.el;
+    const hit = best;
+    setTimeout(() => {
+        hit.state = "gone";
+        if (el.isConnected) el.remove();
+    }, 160);
+}
+
+function stopTiles(opts) {
+    if (tileRun && tileRun.raf) cancelAnimationFrame(tileRun.raf);
+    if (tileRun) tileRun.active = false;
+    tileRun = null;
+    const highway = document.getElementById("highway");
+    if (highway) {
+        highway.classList.remove("on");
+        highway.setAttribute("aria-hidden", "true");
+        highway.querySelectorAll(".tile").forEach(el => el.remove());
+    }
+    clearDueKeys();
+    if (!opts || !opts.silent) {
+        document.getElementById("status").innerText = "Tiles stopped.";
+    }
+}
+
+function replayTiles() {
+    const raw = document.getElementById("songInput").value;
+    if (!raw.trim()) {
+        document.getElementById("status").innerText = "Select a song first.";
+        return;
+    }
+    const song = selectedSong();
+    if (audioContext.state === "suspended") audioContext.resume();
+    startTiles(raw, song ? song.title : "Song");
+}
+
+function loggedInUid() {
+    try {
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        return user && typeof user.uid === "string" ? user.uid : "";
+    } catch (error) {
+        return "";
+    }
+}
+
+function asNotation(value) {
+    if (typeof value === "string" && value.trim()) return value;
+    if (!Array.isArray(value)) return "";
+    const text = value.map(part => {
+        if (typeof part === "string") return part;
+        if (part && typeof part === "object") return part.key || part.note || part.notation || "";
+        return "";
+    }).filter(Boolean).join(" ");
+    return text.trim() ? text : "";
+}
+
+function songRecord(id, data) {
+    if (!data || typeof data !== "object") return null;
+    const notation = asNotation(data.notation)
+        || asNotation(data.song)
+        || asNotation(data.content)
+        || asNotation(data.keys)
+        || asNotation(data.melody)
+        || asNotation(data.sequence)
+        || asNotation(data.pattern)
+        || asNotation(data.data)
+        || asNotation(data.text)
+        || asNotation(data.notes);
+    if (!notation) return null;
+    const title = data.title || data.name || data.songName || data.song_name || "Untitled";
+    return { id: id, title: String(title), notation: notation };
+}
+
+function setLibraryStatus(text) {
+    const status = document.getElementById("status");
+    const current = status.innerText;
+    const canReplace = current === "Ready."
+        || current.indexOf("Library") === 0
+        || current.indexOf("No uploaded") === 0
+        || current.indexOf("Couldn't reach") === 0
+        || current.indexOf("Loading") === 0;
+    if (canReplace) status.innerText = text;
+}
+
+async function reloadSongLibrary() {
+    const remote = [];
+    let failures = 0;
+    try {
+        const firebaseMod = await import("./firebase.js");
+        const firestore = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+        const db = firebaseMod.db;
+        async function guard(run) {
+            try { await run(); }
+            catch (error) {
+                failures += 1;
+                console.warn(error);
+            }
+        }
+        await guard(async () => {
+            const snap = await firestore.getDocs(firestore.collection(db, "songs"));
+            snap.forEach(item => {
+                const song = songRecord("songs/" + item.id, item.data());
+                if (song) remote.push(song);
+            });
+        });
+        const uid = loggedInUid();
+        if (uid) {
+            await guard(async () => {
+                const snap = await firestore.getDocs(firestore.collection(db, "users", uid, "songs"));
+                snap.forEach(item => {
+                    const song = songRecord("users/" + uid + "/songs/" + item.id, item.data());
+                    if (song) remote.push(song);
+                });
+            });
+            await guard(async () => {
+                const snap = await firestore.getDoc(firestore.doc(db, "users", uid));
+                if (!snap.exists()) return;
+                const list = snap.data().songs;
+                if (!Array.isArray(list)) return;
+                list.forEach((entry, index) => {
+                    if (typeof entry === "string") {
+                        remote.push({
+                            id: "users/" + uid + "/list/" + index,
+                            title: "Song " + (index + 1),
+                            notation: entry
+                        });
+                        return;
+                    }
+                    const song = songRecord(
+                        entry && entry.id
+                            ? "users/" + uid + "/songs/" + entry.id
+                            : "users/" + uid + "/list/" + index,
+                        entry
+                    );
+                    if (song) remote.push(song);
+                });
+            });
+        }
+        remote.sort((a, b) => a.title.localeCompare(b.title));
+        populateSongMenu(remote);
+        if (failures && !remote.length) {
+            setLibraryStatus(loggedInUid()
+                ? "Couldn't reach the song library. The built-in demo is still here."
+                : "Log in, then save a song from the Songs page. The built-in demo is ready.");
+        } else if (!remote.length) {
+            setLibraryStatus("No uploaded songs yet. The built-in demo is ready.");
+        } else {
+            setLibraryStatus("Library loaded · " + remote.length + " song" + (remote.length === 1 ? "" : "s") + ".");
+        }
+    } catch (error) {
+        console.warn(error);
+        populateSongMenu([]);
+        setLibraryStatus("Couldn't reach the song library. The built-in demo is still here.");
+    }
+}
+
+document.getElementById("songSelect").addEventListener("change", () => {
+    const sel = document.getElementById("songSelect");
+    const song = selectedSong();
+    sel.blur();
+    if (!song) {
+        stopTiles();
+        return;
+    }
+    document.getElementById("songInput").value = normalizeNotation(song.notation);
+    if (audioContext.state === "suspended") audioContext.resume();
+    startTiles(document.getElementById("songInput").value, song.title);
+});
+
+window.addEventListener("resize", () => {
+    if (tileRun && tileRun.active) positionLanes();
+});
+
+populateSongMenu(null);
+reloadSongLibrary();
 
 </script>
 </body>
