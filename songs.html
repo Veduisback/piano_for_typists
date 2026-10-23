@@ -163,13 +163,15 @@ button:disabled{opacity:0.55;cursor:wait;}
     <section class="card">
         <h2 class="section-title">Add a song</h2>
         <p class="helper">
-            Use the letters A–Z. Spaces pause, <b>_</b> plays a chord, and a new line holds a little longer.
-            Example: <b>x c v b</b> or <b>x_v_n</b>.
+            Use the letters A–Z. A lowercase letter is the printed key. A capital, or Caps Lock, plays that same key one octave higher.
+            Spaces pause, <b>_</b> plays a chord, and a new line holds a little longer.
+            Example: <b>x c v</b> or <b>X_V_N</b>.
         </p>
         <div class="map">
             <span>Z X C V B N M → B C D E F G A</span>
             <span>A S D F G H J K L → B C D E F G A B C</span>
             <span>Q W E R T Y U I O P → the sharps</span>
+            <span>Caps Lock lifts the key you typed by one octave</span>
         </div>
 
         <label for="title">Song title</label>
@@ -213,7 +215,7 @@ import {
     updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const mapped = /[qwertyuiopasdfghjklzxcvbnm]/;
+const mapped = /[a-z]/i;
 const syntax = /[\s_\/]/;
 
 const titleInput = document.getElementById("title");
@@ -232,7 +234,7 @@ function currentUser() {
 }
 
 function normalizeNotation(raw) {
-    return String(raw || "").replace(/\r/g, "").toLowerCase();
+    return String(raw || "").replace(/\r/g, "");
 }
 
 function setStatus(message, bad) {

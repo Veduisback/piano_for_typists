@@ -235,6 +235,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 }
 .white.soon,.black.soon{outline:2px dashed rgba(0,212,255,0.75);outline-offset:-4px;}
 .black.soon{outline-color:rgba(255,51,102,0.85);}
+.white.soon-up,.black.soon-up{outline:2px dashed rgba(155,93,229,0.95);outline-offset:-4px;}
 .white.due,.black.due{outline:2px solid var(--cyan);outline-offset:-3px;}
 /* black key positions — 60px keys + 2px gap = 62px per slot, 20px padding */
 .b1{left:124px;}.b2{left:186px;}.b3{left:310px;}.b4{left:372px;}.b5{left:434px;}
@@ -322,6 +323,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
     border-color:rgba(255,51,102,0.95);
     box-shadow:0 0 18px rgba(255,51,102,0.35);
 }
+.tile.up{
+    color:#2a1048;
+    background:linear-gradient(180deg,#f7f0ff 0%,#c9a6ff 100%);
+    border-color:rgba(155,93,229,0.95);
+    box-shadow:0 0 18px rgba(155,93,229,0.45);
+}
+.landing.up{
+    color:#f3e8ff;
+    background:rgba(155,93,229,0.2);
+    border-color:rgba(155,93,229,0.95);
+    box-shadow:0 0 18px rgba(155,93,229,0.4);
+}
 @keyframes landPulse{0%,100%{opacity:1}50%{opacity:0.45}}
 body.light .highway{
     background:linear-gradient(180deg,rgba(0,80,110,0.03),rgba(0,90,120,0.1));
@@ -355,7 +368,7 @@ body.light .tile{color:#06202a;}
     <h1>🎹 Piano Studio</h1>
     <p class="sub">
         Type A–Z to play two octaves. Use <em>_</em> for chords: <em>x_v_n</em> = C+E+G<br>
-        Spaces = pause &nbsp;·&nbsp; 10 fully‑synthesized voices, all fixed
+        Spaces = pause &nbsp;·&nbsp; Caps Lock lifts the same key one octave
     </p>
 </header>
 
@@ -380,7 +393,7 @@ body.light .tile{color:#06202a;}
     <div class="map">
         <span class="mh">RANGE</span>
         <div class="r"><b>Z</b> is the low B, <b>L</b> is the high C</div>
-        <div class="r">Every letter A–Z plays once. No numbers.</div>
+        <div class="r">Caps Lock, or a capital, plays that key one octave higher</div>
     </div>
     <div class="map">
         <span class="mh">CHORD EXAMPLES</span>
@@ -398,7 +411,7 @@ body.light .tile{color:#06202a;}
     <button class="bs" onclick="reloadSongLibrary()">⟳ Library</button>
     <button class="bs" onclick="window.location.href='songs.html'">＋ Songs</button>
 </div>
-<p class="song-hint">Tiles fall onto the key you need. A glowing outline appears on that key before the tile arrives, so you can rest your finger there. White keys run Z through L, and the sharps are Q through P. A space leaves a gap, and notes joined with _ land together.</p>
+<p class="song-hint">Tiles fall onto the key you need. A lowercase letter is the normal key. A capital, shown in purple, is that same key with Caps Lock on, one octave higher. A space leaves a gap, and notes joined with _ land together.</p>
 <div class="tile-stats">
     <span>Hits<b id="tileHits">0</b></span>
     <span>Misses<b id="tileMisses">0</b></span>
@@ -602,7 +615,8 @@ let recording = false;
 let recordedNotes = [];
 
 /* ─────────────────────────────────────────
-   A–Z ONLY. Two octaves, B3 through C6.
+   A–Z ONLY. Lowercase is B3 through C6.
+   A capital is that same key one octave higher, up to C7.
    White keys: bottom row, then home row.
    Black keys: top letter row, Q through P.
 ───────────────────────────────────────── */
@@ -620,7 +634,7 @@ const visualMap = {};
    FIXED SOUND SYNTHESIS ENGINE
    All 10 presets now produce distinct tones
 ───────────────────────────────────────── */
-function playSingle(freq, key) {
+function playSingle(freq, key, shown) {
     const ctx    = audioContext;
     const sus    = Number(document.getElementById("sustain").value);
     const vol    = Number(document.getElementById("volume").value);
@@ -746,24 +760,44 @@ function playSingle(freq, key) {
     }
 
     animateKey(key);
-    updateHistory(key);
+    updateHistory(shown || key);
 }
 
 /* ─────────────────────────────────────────
    CORE LOGIC — UNCHANGED
 ───────────────────────────────────────── */
 function playChord(keys) {
-    keys.forEach(k => { if (notes[k]) playSingle(notes[k], k); });
+    keys.forEach(k => {
+        const note = pitchOf(k);
+        if (note.freq) playSingle(note.freq, note.key, note.shown);
+    });
+}
+
+function pitchOf(token) {
+    const text = String(token || "");
+    const key = text.toLowerCase();
+    if (!notes[key]) return { freq: 0, key: key, shown: text, upper: false };
+    const upper = text.length === 1 && text >= "A" && text <= "Z";
+    return {
+        freq: upper ? notes[key] * 2 : notes[key],
+        key: key,
+        shown: text,
+        upper: upper
+    };
 }
 
 function triggerKey(key) {
-    if (key.includes("_")) playChord(key.split("_"));
-    else if (notes[key]) playSingle(notes[key], key);
-    if (recording) recordedNotes.push(key);
+    const text = String(key);
+    if (text.includes("_")) playChord(text.split("_"));
+    else {
+        const note = pitchOf(text);
+        if (note.freq) playSingle(note.freq, note.key, note.shown);
+    }
+    if (recording) recordedNotes.push(text);
 }
 
 function animateKey(key) {
-    const visual = visualMap[key] || key;
+    const visual = (visualMap[key] || key || "").toLowerCase();
     const el = document.querySelector(`[data-key="${visual}"]`);
     if (el) { el.classList.add("active"); setTimeout(() => el.classList.remove("active"), 120); }
 }
@@ -779,9 +813,11 @@ document.addEventListener("keydown", e => {
     const tag = e.target && e.target.tagName;
     if (tag === "TEXTAREA" || tag === "INPUT" || tag === "SELECT") return;
     if (audioContext.state === "suspended") audioContext.resume();
-    const key = e.key.toLowerCase();
-    judgeTile(key);
-    triggerKey(key);
+    const raw = e.key;
+    const key = raw.toLowerCase();
+    const upper = raw.length === 1 && raw >= "A" && raw <= "Z";
+    judgeTile(key, upper);
+    triggerKey(upper ? raw : key);
 });
 
 document.querySelectorAll(".white,.black").forEach(el => {
@@ -1016,7 +1052,7 @@ let tileRun = null;
 let laneAnchors = [];
 
 function normalizeNotation(raw) {
-    return String(raw == null ? "" : raw).replace(/\r/g, "").toLowerCase();
+    return String(raw == null ? "" : raw).replace(/\r/g, "");
 }
 
 function selectedSong() {
@@ -1080,7 +1116,7 @@ function renderTileStats() {
 }
 
 function keyElement(key) {
-    const visual = visualMap[key] || key;
+    const visual = (visualMap[key] || key || "").toLowerCase();
     return document.querySelector('#piano [data-key="' + visual + '"]');
 }
 
@@ -1115,12 +1151,15 @@ function chartTiles(raw) {
     const tiles = [];
     events.forEach(event => {
         String(event.note).split("_").forEach(part => {
-            const key = part.trim();
+            const token = part.trim();
+            const key = token.toLowerCase();
             if (!notes[key]) return;
             const anchor = keyElement(key);
             if (!anchor) return;
+            const upper = token.length === 1 && token >= "A" && token <= "Z";
             tiles.push({
                 key: key,
+                upper: upper,
                 anchor: anchor,
                 hitAt: cursor,
                 state: "live",
@@ -1146,10 +1185,15 @@ function chartTiles(raw) {
 }
 
 function clearDueKeys() {
-    document.querySelectorAll("#piano .due, #piano .soon").forEach(el => {
+    document.querySelectorAll("#piano .due, #piano .soon, #piano .soon-up").forEach(el => {
         el.classList.remove("due");
         el.classList.remove("soon");
+        el.classList.remove("soon-up");
     });
+}
+
+function tileFace(tile) {
+    return tile.upper ? tile.key.toUpperCase() : tile.key;
 }
 
 function startTiles(raw, title, opts) {
@@ -1175,14 +1219,14 @@ function startTiles(raw, title, opts) {
 
     chart.tiles.forEach(tile => {
         const el = document.createElement("div");
-        el.className = "tile" + (tile.anchor.classList.contains("black") ? " sharp" : "");
-        el.textContent = tile.key.toUpperCase();
+        el.className = "tile" + (tile.anchor.classList.contains("black") ? " sharp" : "") + (tile.upper ? " up" : "");
+        el.textContent = tileFace(tile);
         el.style.visibility = "hidden";
         highway.appendChild(el);
         tile.el = el;
         const mark = document.createElement("div");
-        mark.className = "landing" + (tile.anchor.classList.contains("black") ? " sharp" : "");
-        mark.textContent = tile.key.toUpperCase();
+        mark.className = "landing" + (tile.anchor.classList.contains("black") ? " sharp" : "") + (tile.upper ? " up" : "");
+        mark.textContent = tileFace(tile);
         mark.style.visibility = "hidden";
         highway.appendChild(mark);
         tile.mark = mark;
@@ -1216,6 +1260,7 @@ function tileFrame() {
     const laneH = Math.max(highway.clientHeight - TILE_H, 1);
     const dueKeys = new Set();
     const soonKeys = new Set();
+    const soonUpKeys = new Set();
     const nextByKey = new Map();
     tileRun.tiles.forEach(tile => {
         if (tile.state !== "live") return;
@@ -1237,6 +1282,7 @@ function tileFrame() {
                 tile.mark.style.left = x;
                 tile.mark.style.top = laneH + "px";
                 soonKeys.add(tile.anchor);
+                if (tile.upper) soonUpKeys.add(tile.anchor);
             }
         }
         if (progress < 0) {
@@ -1269,6 +1315,7 @@ function tileFrame() {
 
     clearDueKeys();
     soonKeys.forEach(el => el.classList.add("soon"));
+    soonUpKeys.forEach(el => el.classList.add("soon-up"));
     dueKeys.forEach(el => el.classList.add("due"));
 
     const pending = tileRun.tiles.some(tile => tile.state === "live");
@@ -1289,13 +1336,14 @@ function tileFrame() {
     tileRun.raf = requestAnimationFrame(tileFrame);
 }
 
-function judgeTile(key) {
+function judgeTile(key, upper) {
     if (!tileRun || !tileRun.active || !notes[key]) return;
+    const wantUpper = !!upper;
     const elapsed = performance.now() - tileRun.started;
     let best = null;
     let bestDist = Infinity;
     tileRun.tiles.forEach(tile => {
-        if (tile.state !== "live" || tile.key !== key) return;
+        if (tile.state !== "live" || tile.key !== key || !!tile.upper !== wantUpper) return;
         const dist = Math.abs(tile.hitAt - elapsed);
         if (dist < bestDist) {
             best = tile;

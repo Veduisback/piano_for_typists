@@ -962,7 +962,7 @@
             <div class="how-container reveal delay-1">
                 <div class="how-text">
                     <h3 class="text-gradient">Designed for the Home Row</h3>
-                    <p>White keys sit on the bottom row and the home row. The sharps are the top letter row, Q through P. Two octaves, letters A to Z only, so both hands stay on the keys you already type.</p>
+                    <p>White keys sit on the bottom row and the home row. The sharps are the top letter row, Q through P. Two octaves, letters A to Z only, so both hands stay on the keys you already type. Caps Lock plays the same key one octave higher.</p>
                     <div class="stats-row">
                         <div class="stat">
                             <div class="stat-val"><span class="stat-num" data-val="12">0</span>ms</div>
@@ -1284,7 +1284,7 @@
         }, 800);
 
         // Interaction logic
-        function triggerNote(noteId, keyChar) {
+        function triggerNote(noteId, keyChar, octaveUp) {
             autoPlayActive = false;
             
             // Visual for Piano Key
@@ -1303,7 +1303,7 @@
                 }
             }
             
-            playTone(noteFreqs[noteId]);
+            playTone(octaveUp ? noteFreqs[noteId] * 2 : noteFreqs[noteId]);
         }
 
         // Mouse Listeners
@@ -1322,10 +1322,12 @@
         // Keyboard Listeners
         window.addEventListener('keydown', (e) => {
             if (e.repeat || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            const char = e.key.toLowerCase();
+            const raw = e.key;
+            const char = raw.toLowerCase();
             if (keyMapping[char]) {
                 e.preventDefault();
-                triggerNote(keyMapping[char], char);
+                const upper = raw.length === 1 && raw >= "A" && raw <= "Z";
+                triggerNote(keyMapping[char], char, upper);
             }
         });
 

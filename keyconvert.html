@@ -207,7 +207,7 @@ button:hover{
 
     <p class="subtitle">
         Convert standard piano notes into TypeTone letters A–Z.
-        Example: C D E F G A B → X C V B N M A
+        Example: C D E F G A B → x c v b n m a
     </p>
 
     <div class="card">
@@ -246,8 +246,9 @@ C# D# F#"></textarea>
         </div>
 
         <div class="helper">
-            Supported notes run from B3 to C6.
-            A bare note such as C means octave 4. Add an octave number for the rest, like B3, C5, or C6.
+            Supported notes run from B3 to C7.
+            A bare note such as C means octave 4. Add an octave number for the rest, like B3, C5, or C7.
+            A capital letter in the result is the same key with Caps Lock, one octave higher.
             Spaces stay as gaps and _ stays a chord.
         </div>
 
@@ -283,7 +284,10 @@ const noteMap = {
     "G5":"h", "G#5":"o",
     "A5":"j", "A#5":"p",
     "B5":"k",
-    "C6":"l"
+    "C6":"l",
+    "C#6":"Y", "D6":"D", "D#6":"U", "E6":"F",
+    "F6":"G", "F#6":"I", "G6":"H", "G#6":"O",
+    "A6":"J", "A#6":"P", "B6":"K", "C7":"L"
 };
 
 const flatToSharp = { C:"B", D:"C#", E:"D#", F:"E", G:"F#", A:"G#", B:"A#" };
