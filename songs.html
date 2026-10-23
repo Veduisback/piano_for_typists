@@ -163,22 +163,20 @@ button:disabled{opacity:0.55;cursor:wait;}
     <section class="card">
         <h2 class="section-title">Add a song</h2>
         <p class="helper">
-            Use the piano letters. Spaces pause, <b>_</b> plays a chord, and a new line holds a little longer.
-            Example: <b>q w e r t</b> or <b>q_e_t</b>.
+            Use the letters A–Z. Spaces pause, <b>_</b> plays a chord, and a new line holds a little longer.
+            Example: <b>x c v b</b> or <b>x_v_n</b>.
         </p>
         <div class="map">
-            <span>Q W E R T Y U → C D E F G A B</span>
-            <span>1 2 3 4 5 → C# D# F# G# A#</span>
-            <span>Z X C V B N M → octave 2</span>
-            <span>A S D F G → octave 2 sharps</span>
-            <span>I O P H J K L and 6 7 8 9 0 → octave 3</span>
+            <span>Z X C V B N M → B C D E F G A</span>
+            <span>A S D F G H J K L → B C D E F G A B C</span>
+            <span>Q W E R T Y U I O P → the sharps</span>
         </div>
 
         <label for="title">Song title</label>
         <input id="title" type="text" maxlength="80" placeholder="Twinkle" autocomplete="off">
 
         <label for="notation">Notation</label>
-        <textarea id="notation" placeholder="q q w q t y&#10;q_e_t"></textarea>
+        <textarea id="notation" placeholder="x x n n m m n&#10;x_v_n"></textarea>
         <p class="helper" id="check"></p>
 
         <div class="file-row">
@@ -215,7 +213,7 @@ import {
     updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const mapped = /[qwertyuiopasdfghjklzxcvbnm0-9]/;
+const mapped = /[qwertyuiopasdfghjklzxcvbnm]/;
 const syntax = /[\s_\/]/;
 
 const titleInput = document.getElementById("title");
@@ -289,7 +287,7 @@ document.getElementById("file").addEventListener("change", () => {
 
 document.getElementById("exampleBtn").addEventListener("click", () => {
     if (!titleInput.value.trim()) titleInput.value = "Example melody";
-    notationInput.value = "q q w q t y\nq_e_t 1 i 6";
+    notationInput.value = "x x n n m m n\nx_v_n";
     refreshCheck();
 });
 

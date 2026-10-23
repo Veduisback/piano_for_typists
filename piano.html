@@ -235,8 +235,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 }
 .white.due,.black.due{outline:2px solid var(--cyan);outline-offset:-3px;}
 /* black key positions — 60px keys + 2px gap = 62px per slot, 20px padding */
-.b1{left:62px;}.b2{left:124px;}.b3{left:248px;}.b4{left:310px;}.b5{left:372px;}
-.b6{left:496px;}.b7{left:558px;}.b8{left:682px;}.b9{left:744px;}.b10{left:806px;}
+.b1{left:124px;}.b2{left:186px;}.b3{left:310px;}.b4{left:372px;}.b5{left:434px;}
+.b6{left:558px;}.b7{left:620px;}.b8{left:744px;}.b9{left:806px;}.b10{left:868px;}
 
 /* ── Song picker + falling tiles ── */
 .song-pick{display:flex;flex-wrap:wrap;gap:7px;align-items:center;}
@@ -334,7 +334,7 @@ body.light .tile{color:#06202a;}
     <div class="tag">TypeTone · Studio X · v2.0</div>
     <h1>🎹 Piano Studio</h1>
     <p class="sub">
-        Type to play. Use <em>_</em> for chords: <em>q_e_t</em> = C+E+G major<br>
+        Type A–Z to play two octaves. Use <em>_</em> for chords: <em>x_v_n</em> = C+E+G<br>
         Spaces = pause &nbsp;·&nbsp; 10 fully‑synthesized voices, all fixed
     </p>
 </header>
@@ -348,24 +348,24 @@ body.light .tile{color:#06202a;}
 <div class="sec">Key Mapping</div>
 <div class="maps">
     <div class="map">
-        <span class="mh">OCTAVE 1</span>
-        <div class="r"><b>Q W E R T Y U</b> → C D E F G A B</div>
-        <div class="r"><b>1 2 3 4 5</b> → C# D# F# G# A#</div>
+        <span class="mh">WHITE KEYS · LOW</span>
+        <div class="r"><b>Z X C V B N M</b> → B C D E F G A</div>
+        <div class="r"><b>A S D F G H J K L</b> → B C D E F G A B C</div>
     </div>
     <div class="map">
-        <span class="mh">OCTAVE 2</span>
-        <div class="r"><b>Z X C V B N M</b> → C D E F G A B</div>
-        <div class="r"><b>A S D F G</b> → C# D# F# G# A#</div>
+        <span class="mh">BLACK KEYS · Q TO P</span>
+        <div class="r"><b>Q W E R T</b> → C# D# F# G# A#</div>
+        <div class="r"><b>Y U I O P</b> → C# D# F# G# A#</div>
     </div>
     <div class="map">
-        <span class="mh">OCTAVE 3</span>
-        <div class="r"><b>I O P H J K L</b> → C D E F G A B</div>
-        <div class="r"><b>6 7 8 9 0</b> → C# D# F# G# A#</div>
+        <span class="mh">RANGE</span>
+        <div class="r"><b>Z</b> is the low B, <b>L</b> is the high C</div>
+        <div class="r">Every letter A–Z plays once. No numbers.</div>
     </div>
     <div class="map">
         <span class="mh">CHORD EXAMPLES</span>
-        <div class="r"><b>q_e_t</b> = C major (C+E+G)</div>
-        <div class="r"><b>q_3_t</b> = C minor (C+Eb+G)</div>
+        <div class="r"><b>x_v_n</b> = C major (C+E+G)</div>
+        <div class="r"><b>x_w_n</b> = C minor (C+Eb+G)</div>
     </div>
 </div>
 
@@ -378,7 +378,7 @@ body.light .tile{color:#06202a;}
     <button class="bs" onclick="reloadSongLibrary()">⟳ Library</button>
     <button class="bs" onclick="window.location.href='songs.html'">＋ Songs</button>
 </div>
-<p class="song-hint">Tiles fall onto the key you need. Type the letter on the tile — the same map already printed on the piano, including second-octave aliases such as I for the Z key and 6 for the A key. Chords joined with _ arrive together.</p>
+<p class="song-hint">Tiles fall onto the key you need. Type the letter on the tile. White keys run Z through L, and the sharps are Q through P. A space leaves a gap, and notes joined with _ land together.</p>
 <div class="tile-stats">
     <span>Hits<b id="tileHits">0</b></span>
     <span>Misses<b id="tileMisses">0</b></span>
@@ -387,9 +387,8 @@ body.light .tile{color:#06202a;}
 
 <div class="sec" style="margin-top:18px;">Song Player</div>
 
-<textarea id="songInput" placeholder="q w e r t y u
-q_e_t  z_c_b
-1_2  4_5
+<textarea id="songInput" placeholder="x c v b n m a
+x_v_n  s_f_h
 
 _ = chord    spaces = pause"></textarea>
 
@@ -538,30 +537,32 @@ _ = chord    spaces = pause"></textarea>
     <div class="hit-line"></div>
 </div>
 <div class="piano" id="piano">
-    <div class="white" data-key="q">Q</div>
-    <div class="white" data-key="w">W</div>
-    <div class="white" data-key="e">E</div>
-    <div class="white" data-key="r">R</div>
-    <div class="white" data-key="t">T</div>
-    <div class="white" data-key="y">Y</div>
-    <div class="white" data-key="u">U</div>
-    <div class="white" data-key="z">Z/I</div>
-    <div class="white" data-key="x">X/O</div>
-    <div class="white" data-key="c">C/P</div>
-    <div class="white" data-key="v">V/H</div>
-    <div class="white" data-key="b">B/J</div>
-    <div class="white" data-key="n">N/K</div>
-    <div class="white" data-key="m">M/L</div>
-    <div class="black b1"  data-key="1">1</div>
-    <div class="black b2"  data-key="2">2</div>
-    <div class="black b3"  data-key="3">3</div>
-    <div class="black b4"  data-key="4">4</div>
-    <div class="black b5"  data-key="5">5</div>
-    <div class="black b6"  data-key="a">A/6</div>
-    <div class="black b7"  data-key="s">S/7</div>
-    <div class="black b8"  data-key="d">D/8</div>
-    <div class="black b9"  data-key="f">F/9</div>
-    <div class="black b10" data-key="g">G/0</div>
+    <div class="white" data-key="z">Z</div>
+    <div class="white" data-key="x">X</div>
+    <div class="white" data-key="c">C</div>
+    <div class="white" data-key="v">V</div>
+    <div class="white" data-key="b">B</div>
+    <div class="white" data-key="n">N</div>
+    <div class="white" data-key="m">M</div>
+    <div class="white" data-key="a">A</div>
+    <div class="white" data-key="s">S</div>
+    <div class="white" data-key="d">D</div>
+    <div class="white" data-key="f">F</div>
+    <div class="white" data-key="g">G</div>
+    <div class="white" data-key="h">H</div>
+    <div class="white" data-key="j">J</div>
+    <div class="white" data-key="k">K</div>
+    <div class="white" data-key="l">L</div>
+    <div class="black b1"  data-key="q">Q</div>
+    <div class="black b2"  data-key="w">W</div>
+    <div class="black b3"  data-key="e">E</div>
+    <div class="black b4"  data-key="r">R</div>
+    <div class="black b5"  data-key="t">T</div>
+    <div class="black b6"  data-key="y">Y</div>
+    <div class="black b7"  data-key="u">U</div>
+    <div class="black b8"  data-key="i">I</div>
+    <div class="black b9"  data-key="o">O</div>
+    <div class="black b10" data-key="p">P</div>
 </div>
 </div>
 </div>
@@ -581,24 +582,19 @@ let recording = false;
 let recordedNotes = [];
 
 /* ─────────────────────────────────────────
-   ALL NOTE DATA — UNCHANGED
+   A–Z ONLY. Two octaves, B3 through C6.
+   White keys: bottom row, then home row.
+   Black keys: top letter row, Q through P.
 ───────────────────────────────────────── */
 const notes = {
-    q:261.63,"1":277.18,w:293.66,"2":311.13,e:329.63,
-    r:349.23,"3":369.99,t:392.00,"4":415.30,y:440.00,
-    "5":466.16,u:493.88,
-    z:523.25,a:554.37,x:587.33,s:622.25,c:659.25,
-    v:698.46,d:739.99,b:783.99,f:830.61,n:880.00,
-    g:932.33,m:987.77,
-    i:523.25,"6":554.37,o:587.33,"7":622.25,p:659.25,
-    h:698.46,"8":739.99,j:783.99,"9":830.61,k:880.00,
-    "0":932.33,l:987.77
+    z:246.94, x:261.63, q:277.18, c:293.66, w:311.13, v:329.63,
+    b:349.23, e:369.99, n:392.00, r:415.30, m:440.00, t:466.16,
+    a:493.88, s:523.25, y:554.37, d:587.33, u:622.25, f:659.25,
+    g:698.46, i:739.99, h:783.99, o:830.61, j:880.00, p:932.33,
+    k:987.77, l:1046.50
 };
 
-const visualMap = {
-    i:"z",o:"x",p:"c",h:"v",j:"b",k:"n",l:"m",
-    "6":"a","7":"s","8":"d","9":"f","0":"g"
-};
+const visualMap = {};
 
 /* ─────────────────────────────────────────
    FIXED SOUND SYNTHESIS ENGINE
@@ -969,7 +965,7 @@ function downloadRecording() {
 }
 
 function loadDemoSong() {
-    document.getElementById("songInput").value = "q q w q t y q q w q u t q q q p t y w e";
+    document.getElementById("songInput").value = "x x n n m m n  b b v v c c x";
 }
 
 function toggleTheme() {
@@ -989,7 +985,7 @@ const BUILTIN_SONGS = [
     {
         id: "local-demo",
         title: "Demo melody",
-        notation: "q q w q t y q q w q u t q q q p t y w e",
+        notation: "x x n n m m n  b b v v c c x",
         source: "built-in"
     }
 ];

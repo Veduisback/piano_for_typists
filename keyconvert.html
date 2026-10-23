@@ -206,8 +206,8 @@ button:hover{
     </h1>
 
     <p class="subtitle">
-        Convert standard piano notes into TypeTone keyboard keys instantly.
-        Example: C D E F G A B → Q W E R T Y U
+        Convert standard piano notes into TypeTone letters A–Z.
+        Example: C D E F G A B → X C V B N M A
     </p>
 
     <div class="card">
@@ -219,7 +219,8 @@ button:hover{
         <textarea id="input"
 placeholder="Example:
 C D E F G A B
-C# D# F# G# A#"></textarea>
+C5 D5 E5
+C# D# F#"></textarea>
 
         <div class="buttons">
 
@@ -245,8 +246,9 @@ C# D# F# G# A#"></textarea>
         </div>
 
         <div class="helper">
-            Supported Notes:
-            C D E F G A B C# D# F# G# A#
+            Supported notes run from B3 to C6.
+            A bare note such as C means octave 4. Add an octave number for the rest, like B3, C5, or C6.
+            Spaces stay as gaps and _ stays a chord.
         </div>
 
     </div>
@@ -257,69 +259,7 @@ C# D# F# G# A#"></textarea>
             Note Mapping
         </div>
 
-        <div class="mapping-grid">
-
-            <div class="map-card">
-                <div class="note">C</div>
-                <div class="key">Q</div>
-            </div>
-
-            <div class="map-card">
-                <div class="note">C#</div>
-                <div class="key">1</div>
-            </div>
-
-            <div class="map-card">
-                <div class="note">D</div>
-                <div class="key">W</div>
-            </div>
-
-            <div class="map-card">
-                <div class="note">D#</div>
-                <div class="key">2</div>
-            </div>
-
-            <div class="map-card">
-                <div class="note">E</div>
-                <div class="key">E</div>
-            </div>
-
-            <div class="map-card">
-                <div class="note">F</div>
-                <div class="key">R</div>
-            </div>
-
-            <div class="map-card">
-                <div class="note">F#</div>
-                <div class="key">3</div>
-            </div>
-
-            <div class="map-card">
-                <div class="note">G</div>
-                <div class="key">T</div>
-            </div>
-
-            <div class="map-card">
-                <div class="note">G#</div>
-                <div class="key">4</div>
-            </div>
-
-            <div class="map-card">
-                <div class="note">A</div>
-                <div class="key">Y</div>
-            </div>
-
-            <div class="map-card">
-                <div class="note">A#</div>
-                <div class="key">5</div>
-            </div>
-
-            <div class="map-card">
-                <div class="note">B</div>
-                <div class="key">U</div>
-            </div>
-
-        </div>
+        <div class="mapping-grid" id="mapping"></div>
 
     </div>
 
@@ -328,55 +268,65 @@ C# D# F# G# A#"></textarea>
 <script>
 
 const noteMap = {
-
-    "C":"Q",
-    "C#":"1",
-
-    "D":"W",
-    "D#":"2",
-
-    "E":"E",
-
-    "F":"R",
-    "F#":"3",
-
-    "G":"T",
-    "G#":"4",
-
-    "A":"Y",
-    "A#":"5",
-
-    "B":"U"
+    "B3":"z",
+    "C4":"x", "C#4":"q",
+    "D4":"c", "D#4":"w",
+    "E4":"v",
+    "F4":"b", "F#4":"e",
+    "G4":"n", "G#4":"r",
+    "A4":"m", "A#4":"t",
+    "B4":"a",
+    "C5":"s", "C#5":"y",
+    "D5":"d", "D#5":"u",
+    "E5":"f",
+    "F5":"g", "F#5":"i",
+    "G5":"h", "G#5":"o",
+    "A5":"j", "A#5":"p",
+    "B5":"k",
+    "C6":"l"
 };
 
+const flatToSharp = { C:"B", D:"C#", E:"D#", F:"E", G:"F#", A:"G#", B:"A#" };
+
+const grid = document.getElementById("mapping");
+Object.keys(noteMap).forEach(name => {
+    const card = document.createElement("div");
+    card.className = "map-card";
+    const note = document.createElement("div");
+    note.className = "note";
+    note.textContent = name;
+    const key = document.createElement("div");
+    key.className = "key";
+    key.textContent = noteMap[name].toUpperCase();
+    card.appendChild(note);
+    card.appendChild(key);
+    grid.appendChild(card);
+});
+
+function lookupNote(token) {
+    const match = token.toUpperCase().match(/^([A-G])([#B])?(\d)?$/);
+    if (!match) return "";
+    let name = match[1];
+    const accidental = match[2] || "";
+    const octave = match[3] || "4";
+    if (accidental === "B") {
+        if (name === "C") return noteMap["B" + (Number(octave) - 1)] || "";
+        const shifted = flatToSharp[name];
+        if (!shifted) return "";
+        name = shifted;
+    } else if (accidental === "#") {
+        name += "#";
+    }
+    return noteMap[name + octave] || "";
+}
+
 function convertNotes(){
-
-    const input =
-        document.getElementById("input")
-        .value
-        .toUpperCase();
-
-    const notes =
-        input.split(/\s+/);
-
-    let result = [];
-
-    notes.forEach(note=>{
-
-        if(noteMap[note]){
-
-            result.push(noteMap[note]);
-        }
-
-        else{
-
-            result.push("?");
-        }
-    });
-
-    document.getElementById("output")
-    .innerText =
-        result.join(" ");
+    const input = document.getElementById("input").value.replace(/\r/g, "");
+    const result = input.split(/(\s+|_)/).map(part => {
+        if (!part || part === "_" || /^\s+$/.test(part)) return part;
+        return lookupNote(part) || "?";
+    }).join("");
+    document.getElementById("output").innerText = result.trim() ? result : "Converted keys will appear here...";
 }
 
 function copyOutput(){
