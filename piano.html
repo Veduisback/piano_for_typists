@@ -233,6 +233,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
     transform:translateY(3px);color:rgba(255,255,255,0.9);
     box-shadow:inset 0 -1px 0 rgba(0,0,0,0.2),0 0 18px rgba(255,51,102,0.55),0 0 36px rgba(255,51,102,0.25);
 }
+.white.soon,.black.soon{outline:2px dashed rgba(0,212,255,0.75);outline-offset:-4px;}
+.black.soon{outline-color:rgba(255,51,102,0.85);}
 .white.due,.black.due{outline:2px solid var(--cyan);outline-offset:-3px;}
 /* black key positions — 60px keys + 2px gap = 62px per slot, 20px padding */
 .b1{left:124px;}.b2{left:186px;}.b3{left:310px;}.b4{left:372px;}.b5{left:434px;}
@@ -303,6 +305,24 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
     box-shadow:0 0 20px rgba(125,255,176,0.75);
 }
 .tile.miss{opacity:0.28;filter:grayscale(0.5);}
+.landing{
+    position:absolute;top:0;width:44px;height:34px;z-index:2;pointer-events:none;
+    display:flex;align-items:center;justify-content:center;
+    transform:translateX(-50%);
+    font-family:'IBM Plex Mono',monospace;font-size:0.95rem;font-weight:500;
+    color:var(--cyan);border-radius:8px;user-select:none;
+    background:rgba(0,212,255,0.14);
+    border:1px dashed rgba(0,212,255,0.95);
+    box-shadow:0 0 18px rgba(0,212,255,0.35);
+    animation:landPulse 0.9s ease-in-out infinite;
+}
+.landing.sharp{
+    width:36px;color:#ffd0dc;
+    background:rgba(255,51,102,0.16);
+    border-color:rgba(255,51,102,0.95);
+    box-shadow:0 0 18px rgba(255,51,102,0.35);
+}
+@keyframes landPulse{0%,100%{opacity:1}50%{opacity:0.45}}
 body.light .highway{
     background:linear-gradient(180deg,rgba(0,80,110,0.03),rgba(0,90,120,0.1));
     border-color:rgba(0,0,0,0.06);
@@ -378,7 +398,7 @@ body.light .tile{color:#06202a;}
     <button class="bs" onclick="reloadSongLibrary()">⟳ Library</button>
     <button class="bs" onclick="window.location.href='songs.html'">＋ Songs</button>
 </div>
-<p class="song-hint">Tiles fall onto the key you need. Type the letter on the tile. White keys run Z through L, and the sharps are Q through P. A space leaves a gap, and notes joined with _ land together.</p>
+<p class="song-hint">Tiles fall onto the key you need. A glowing outline appears on that key before the tile arrives, so you can rest your finger there. White keys run Z through L, and the sharps are Q through P. A space leaves a gap, and notes joined with _ land together.</p>
 <div class="tile-stats">
     <span>Hits<b id="tileHits">0</b></span>
     <span>Misses<b id="tileMisses">0</b></span>
@@ -979,6 +999,7 @@ function toggleTheme() {
 ───────────────────────────────────────── */
 const TILE_TRAVEL_MS = 1900;
 const TILE_HIT_MS = 170;
+const TILE_PREVIEW_MS = 500;
 const TILE_H = 34;
 
 const BUILTIN_SONGS = [
@@ -1125,7 +1146,10 @@ function chartTiles(raw) {
 }
 
 function clearDueKeys() {
-    document.querySelectorAll("#piano .due").forEach(el => el.classList.remove("due"));
+    document.querySelectorAll("#piano .due, #piano .soon").forEach(el => {
+        el.classList.remove("due");
+        el.classList.remove("soon");
+    });
 }
 
 function startTiles(raw, title, opts) {
@@ -1134,7 +1158,7 @@ function startTiles(raw, title, opts) {
     clearDueKeys();
 
     const highway = document.getElementById("highway");
-    highway.querySelectorAll(".tile").forEach(el => el.remove());
+    highway.querySelectorAll(".tile, .landing").forEach(el => el.remove());
 
     const chart = chartTiles(raw);
     if (!chart.tiles.length) {
@@ -1156,6 +1180,12 @@ function startTiles(raw, title, opts) {
         el.style.visibility = "hidden";
         highway.appendChild(el);
         tile.el = el;
+        const mark = document.createElement("div");
+        mark.className = "landing" + (tile.anchor.classList.contains("black") ? " sharp" : "");
+        mark.textContent = tile.key.toUpperCase();
+        mark.style.visibility = "hidden";
+        highway.appendChild(mark);
+        tile.mark = mark;
     });
 
     tileRun = {
@@ -1185,11 +1215,30 @@ function tileFrame() {
     const elapsed = performance.now() - tileRun.started;
     const laneH = Math.max(highway.clientHeight - TILE_H, 1);
     const dueKeys = new Set();
+    const soonKeys = new Set();
+    const nextByKey = new Map();
+    tileRun.tiles.forEach(tile => {
+        if (tile.state !== "live") return;
+        const remain = tile.hitAt - elapsed;
+        if (remain > TILE_TRAVEL_MS + TILE_PREVIEW_MS || remain < -TILE_HIT_MS) return;
+        const prev = nextByKey.get(tile.key);
+        if (!prev || tile.hitAt < prev.hitAt) nextByKey.set(tile.key, tile);
+    });
 
     tileRun.tiles.forEach(tile => {
         if (tile.state === "gone") return;
         const progress = 1 - (tile.hitAt - elapsed) / TILE_TRAVEL_MS;
-        tile.el.style.left = (tile.anchor.offsetLeft + tile.anchor.offsetWidth / 2 + tile.nudge) + "px";
+        const x = (tile.anchor.offsetLeft + tile.anchor.offsetWidth / 2 + tile.nudge) + "px";
+        tile.el.style.left = x;
+        const warned = tile.state === "live" && nextByKey.get(tile.key) === tile;
+        if (tile.mark) {
+            tile.mark.style.visibility = warned ? "visible" : "hidden";
+            if (warned) {
+                tile.mark.style.left = x;
+                tile.mark.style.top = laneH + "px";
+                soonKeys.add(tile.anchor);
+            }
+        }
         if (progress < 0) {
             tile.el.style.visibility = "hidden";
             return;
@@ -1219,6 +1268,7 @@ function tileFrame() {
     });
 
     clearDueKeys();
+    soonKeys.forEach(el => el.classList.add("soon"));
     dueKeys.forEach(el => el.classList.add("due"));
 
     const pending = tileRun.tiles.some(tile => tile.state === "live");
@@ -1255,6 +1305,7 @@ function judgeTile(key) {
     if (!best || bestDist > TILE_HIT_MS) return;
     best.state = "hit";
     best.el.classList.add("hit");
+    if (best.mark) best.mark.style.visibility = "hidden";
     tileRun.hits += 1;
     tileRun.combo += 1;
     renderTileStats();
@@ -1275,7 +1326,7 @@ function stopTiles(opts) {
     if (highway) {
         highway.classList.remove("on");
         highway.setAttribute("aria-hidden", "true");
-        highway.querySelectorAll(".tile").forEach(el => el.remove());
+        highway.querySelectorAll(".tile, .landing").forEach(el => el.remove());
     }
     clearDueKeys();
     if (!opts || !opts.silent) {
